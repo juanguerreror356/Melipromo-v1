@@ -3,1117 +3,959 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NPS Real Time Engine V2</title>
+<title>NPS Real Time Engine V3</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#0b0f14;--bg2:#111820;--bg3:#161e28;
+  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bg4:#21283b;
   --glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.07);
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-  --t1:#f0f2f5;--t2:#8a94a6;--t3:#505a6b;
-  --green:#00e676;--greenBg:rgba(0,230,118,0.10);--greenGl:rgba(0,230,118,0.25);
-  --yellow:#ffd600;--yellowBg:rgba(255,214,0,0.10);--yellowGl:rgba(255,214,0,0.25);
-  --red:#ff5252;--redBg:rgba(255,82,82,0.10);--redGl:rgba(255,82,82,0.25);
-  --indigo:#536dfe;--indigoBg:rgba(83,109,254,0.10);--indigoGl:rgba(83,109,254,0.25);
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+  --t1:#e6edf3;--t2:#8b949e;--t3:#484f58;
+  --green:#00e676;--greenBg:rgba(0,230,118,0.10);--greenBd:rgba(0,230,118,0.18);
+  --yellow:#ffc107;--yellowBg:rgba(255,193,7,0.10);--yellowBd:rgba(255,193,7,0.18);
+  --red:#ff5252;--redBg:rgba(255,82,82,0.10);--redBd:rgba(255,82,82,0.18);
+  --indigo:#536dfe;--indigoBg:rgba(83,109,254,0.10);
   --purple:#b388ff;--cyan:#00e5ff;
+  --meli-yellow:#FFE600;--meli-blue:#2D3277;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:4px;}
 
 /* ═══ PARTICLES ═══ */
-#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
-.particle{position:absolute;border-radius:50%;opacity:0.12;animation:fp linear infinite;}
-@keyframes fp{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:0.12}90%{opacity:0.12}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.ptc{position:absolute;border-radius:50%;opacity:0.1;animation:fp linear infinite;}
+@keyframes fp{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:0.1}90%{opacity:0.1}100%{transform:translateY(-10vh) scale(1);opacity:0}}
 
-/* ═══ APP ═══ */
-.app{position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:16px 20px;}
+.app{position:relative;z-index:1;max-width:1460px;margin:0 auto;padding:14px 18px;}
 
-/* ═══ HEADER ═══ */
-.hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;margin-bottom:16px;background:var(--glass);border:1px solid var(--border);border-radius:18px;backdrop-filter:blur(20px);}
-.hdr-l{display:flex;align-items:center;gap:14px;}
-.hdr-logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--indigo),var(--purple));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;}
-.hdr-t{font-size:18px;font-weight:700;letter-spacing:-0.5px;}
-.hdr-s{font-size:11px;color:var(--t2);margin-top:1px;}
-.live-b{display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:30px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.2);font-size:12px;font-weight:600;color:var(--red);}
-.live-d{width:9px;height:9px;border-radius:50%;background:var(--red);animation:pd 1.5s ease-in-out infinite;}
-@keyframes pd{0%,100%{box-shadow:0 0 0 0 rgba(255,82,82,0.5)}50%{box-shadow:0 0 0 7px rgba(255,82,82,0)}}
+/* ═══ HEADER (Looker style) ═══ */
+.hdr{display:flex;align-items:center;gap:16px;padding:14px 22px;margin-bottom:4px;background:var(--bg2);border:1px solid var(--border);border-radius:16px 16px 0 0;}
+.hdr-brand{display:flex;align-items:center;gap:12px;}
+.hdr-logo{width:40px;height:40px;border-radius:10px;background:var(--meli-yellow);display:flex;align-items:center;justify-content:center;}
+.hdr-logo svg{width:24px;height:24px;}
+.hdr-titles{display:flex;flex-direction:column;}
+.hdr-t1{font-size:10px;font-weight:700;color:var(--meli-yellow);text-transform:uppercase;letter-spacing:2px;}
+.hdr-t2{font-size:16px;font-weight:800;letter-spacing:-0.3px;}
+.hdr-filters{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.hdr-sel{padding:7px 14px;border-radius:8px;background:var(--bg3);border:1px solid var(--border2);color:var(--t1);font-family:Inter;font-size:12px;font-weight:600;cursor:pointer;min-width:100px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238b949e'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;}
 
-/* ═══ TABS ═══ */
-.tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:4px;width:fit-content;}
-.tab{padding:10px 24px;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.3s;color:var(--t2);border:1px solid transparent;display:flex;align-items:center;gap:6px;}
-.tab:hover{color:var(--t1);}
-.tab.active{background:var(--glass2);color:var(--t1);border-color:var(--border2);box-shadow:0 2px 12px rgba(0,0,0,0.2);}
-.tab-panel{display:none;}
-.tab-panel.active{display:block;}
+/* ═══ FILTER PILLS ═══ */
+.fpills{display:flex;gap:3px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:3px;}
+.fpill{padding:5px 12px;border-radius:6px;border:none;font-family:Inter;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;background:transparent;color:var(--t2);}
+.fpill:hover{color:var(--t1);background:rgba(255,255,255,0.04);}
+.fpill.on{color:var(--t1);background:var(--glass2);box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.fpill[data-v="P"].on{background:var(--greenBg);color:var(--green);}
+.fpill[data-v="N"].on{background:var(--yellowBg);color:var(--yellow);}
+.fpill[data-v="D"].on{background:var(--redBg);color:var(--red);}
 
-/* ═══ CLOCK ROW ═══ */
-.clock-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 4px;}
-.clock{font-size:13px;color:var(--t2);display:flex;align-items:center;gap:6px;}
-.clock b{color:var(--t1);font-size:15px;}
-.next-cierre{font-size:12px;color:var(--t3);background:var(--glass);padding:6px 14px;border-radius:10px;border:1px solid var(--border);}
-.ayer-vs-hoy{font-size:12px;color:var(--t2);background:var(--glass);padding:6px 14px;border-radius:10px;border:1px solid var(--border);}
-.ayer-vs-hoy b{color:var(--t1);}
+/* ═══ TABS BAR ═══ */
+.nav-bar{display:flex;align-items:center;justify-content:center;gap:0;padding:0;background:var(--bg2);border-left:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border);border-radius:0 0 16px 16px;margin-bottom:14px;}
+.nav-tab{padding:12px 28px;font-size:12px;font-weight:600;cursor:pointer;color:var(--t2);transition:all 0.25s;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;}
+.nav-tab:hover{color:var(--t1);}
+.nav-tab.on{color:var(--indigo);border-bottom-color:var(--indigo);}
+.tab-p{display:none;}
+.tab-p.on{display:block;}
 
-/* ═══ 3 COL LAYOUT (like Looker) ═══ */
-.trio{display:grid;grid-template-columns:280px 1fr 280px;gap:16px;margin-bottom:16px;}
-.trio-col{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:18px;backdrop-filter:blur(12px);}
-.trio-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+/* ═══ DISCLAIMER ═══ */
+.disclaimer{text-align:center;font-size:10px;color:var(--t3);margin-bottom:12px;font-style:italic;}
 
-/* ═══ STAT PILLS ═══ */
-.spills{display:flex;gap:8px;margin-bottom:14px;justify-content:center;}
-.spill{padding:6px 14px;border-radius:10px;font-size:18px;font-weight:800;text-align:center;min-width:54px;}
-.spill.p{background:var(--greenBg);color:var(--green);border:1px solid rgba(0,230,118,0.15);}
-.spill.n{background:var(--yellowBg);color:var(--yellow);border:1px solid rgba(255,214,0,0.15);}
-.spill.d{background:var(--redBg);color:var(--red);border:1px solid rgba(255,82,82,0.15);}
+/* ═══ CLOCK + COMPARE ROW ═══ */
+.info-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.clock{font-size:12px;color:var(--t2);display:flex;align-items:center;gap:5px;}
+.clock b{color:var(--t1);font-size:14px;}
+.info-pill{font-size:11px;color:var(--t2);background:var(--bg2);padding:5px 12px;border-radius:8px;border:1px solid var(--border);}
+.info-pill b{color:var(--t1);}
 
-/* ═══ BIG NPS ═══ */
-.big-nps{text-align:center;margin-bottom:14px;}
-.big-nps-label{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:1px;}
-.big-nps-val{font-size:42px;font-weight:900;letter-spacing:-2px;line-height:1;}
-.big-enc{font-size:32px;font-weight:800;text-align:center;color:var(--t1);line-height:1;}
-.big-enc-label{font-size:11px;color:var(--t3);text-align:center;text-transform:uppercase;font-weight:600;letter-spacing:1px;margin-bottom:4px;}
+/* ═══ TRIO (Looker layout) ═══ */
+.trio{display:grid;grid-template-columns:260px 1fr 260px;gap:14px;margin-bottom:14px;}
+.trio-col{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;}
+.trio-t{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t2);margin-bottom:12px;}
 
-/* ═══ TOP CARD ═══ */
-.top-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;}
-.top-card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:8px;}
-.top-card-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;}
-.top-card-name{font-weight:600;color:var(--t1);}
-.top-card-enc{color:var(--t2);}
-.top-card-nps{font-weight:700;}
+/* Stats inside trio */
+.enc-big{text-align:center;margin-bottom:8px;}
+.enc-big-label{font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+.enc-big-val{font-size:36px;font-weight:900;line-height:1;}
+.nps-big{text-align:center;margin-bottom:10px;}
+.nps-big-label{font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+.nps-big-val{font-size:38px;font-weight:900;line-height:1;}
+.pills-row{display:flex;gap:6px;justify-content:center;margin-bottom:12px;}
+.pill{padding:5px 14px;border-radius:8px;font-size:16px;font-weight:800;text-align:center;min-width:48px;}
+.pill.p{background:var(--greenBg);color:var(--green);border:1px solid var(--greenBd);}
+.pill.n{background:var(--yellowBg);color:var(--yellow);border:1px solid var(--yellowBd);}
+.pill.d{background:var(--redBg);color:var(--red);border:1px solid var(--redBd);}
 
-/* ═══ CHART ═══ */
-.chart-wrap{position:relative;height:220px;}
-.meta-line-label{position:absolute;top:8px;right:8px;font-size:10px;color:var(--yellow);font-weight:600;background:var(--yellowBg);padding:3px 8px;border-radius:6px;}
+/* Top cards */
+.tcard{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;}
+.tcard-t{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:6px;}
+.tcard-r{display:flex;align-items:center;justify-content:space-between;font-size:11px;}
+.tcard-n{font-weight:600;}
+.tcard-e{color:var(--t2);font-size:10px;}
+.tcard-nps{font-weight:700;}
+
+/* Live badge (right col) */
+.live-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.live-badge{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.2);font-size:10px;font-weight:700;color:var(--red);}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pd 1.5s ease-in-out infinite;}
+@keyframes pd{0%,100%{box-shadow:0 0 0 0 rgba(255,82,82,0.5)}50%{box-shadow:0 0 0 6px rgba(255,82,82,0)}}
+
+/* Chart */
+.chart-w{position:relative;height:100%;min-height:200px;}
+.meta-label{position:absolute;top:6px;right:6px;font-size:9px;color:var(--yellow);font-weight:700;background:var(--yellowBg);padding:2px 7px;border-radius:5px;border:1px solid var(--yellowBd);}
 
 /* ═══ THERMO ═══ */
-.thermo{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:12px;padding:8px 14px;border-radius:10px;background:var(--glass);border:1px solid var(--border);font-size:12px;font-weight:600;}
+.thermo{display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:12px;padding:7px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);font-size:11px;font-weight:600;color:var(--t2);}
+.thermo b{color:var(--t1);}
 
 /* ═══ NPS BAR ═══ */
-.nps-bar-sec{margin-bottom:16px;}
-.nps-bar-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:0 4px;}
-.nps-bar-l{font-size:12px;font-weight:600;color:var(--t2);}
-.nps-bar-v{font-size:20px;font-weight:800;}
-.nps-track{height:12px;background:var(--glass);border-radius:8px;overflow:hidden;position:relative;border:1px solid var(--border);}
-.nps-fill{height:100%;border-radius:8px;transition:width 0.8s cubic-bezier(0.16,1,0.3,1),background 0.5s;position:relative;}
-.nps-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);animation:sh 2s infinite;}
+.nps-bar{margin-bottom:14px;}
+.nps-bar-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.nps-bar-l{font-size:11px;font-weight:600;color:var(--t2);}
+.nps-bar-v{font-size:18px;font-weight:800;}
+.nps-track{height:10px;background:var(--bg3);border-radius:6px;overflow:hidden;position:relative;border:1px solid var(--border);}
+.nps-fill{height:100%;border-radius:6px;transition:width 0.7s cubic-bezier(0.16,1,0.3,1),background 0.4s;}
+.nps-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);animation:sh 2.5s infinite;}
 @keyframes sh{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-.nps-meta{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--yellow);border-radius:2px;z-index:2;transition:left 0.8s;}
-.nps-meta span{position:absolute;top:-18px;transform:translateX(-50%);font-size:9px;font-weight:700;color:var(--yellow);white-space:nowrap;}
+.nps-meta{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--yellow);border-radius:2px;z-index:2;}
+.nps-meta span{position:absolute;top:-16px;transform:translateX(-50%);font-size:8px;font-weight:700;color:var(--yellow);white-space:nowrap;}
 
-/* ═══ MAIN GRID ═══ */
-.mgrid{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-bottom:16px;}
+/* ═══ ACCORDION (Rachas) ═══ */
+.accordion{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+.acc-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;transition:background 0.2s;user-select:none;}
+.acc-header:hover{background:rgba(255,255,255,0.02);}
+.acc-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t2);display:flex;align-items:center;gap:8px;}
+.acc-badge{font-size:10px;padding:2px 8px;border-radius:6px;background:var(--indigoBg);color:var(--indigo);font-weight:700;}
+.acc-arrow{font-size:14px;color:var(--t3);transition:transform 0.3s;}
+.acc-body{max-height:0;overflow:hidden;transition:max-height 0.4s cubic-bezier(0.16,1,0.3,1);}
+.acc-body.open{max-height:2000px;}
+.acc-inner{padding:0 18px 16px;}
 
-/* ═══ SECTION CARD ═══ */
-.scard{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:18px;backdrop-filter:blur(12px);}
-.stitle{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
-
-/* ═══ RACHAS ═══ */
-.rrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;margin-bottom:6px;transition:all 0.3s;background:rgba(255,255,255,0.015);border:1px solid transparent;}
+/* Racha rows */
+.rrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;margin-bottom:4px;cursor:pointer;transition:all 0.2s;background:transparent;border:1px solid transparent;}
 .rrow:hover{background:rgba(255,255,255,0.03);border-color:var(--border);}
-.ravatar{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
-.rinfo{flex:1;min-width:0;}
-.rname{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.rstats{font-size:10px;color:var(--t3);margin-top:1px;}
+.rrow.selected{background:var(--indigoBg);border-color:rgba(83,109,254,0.2);}
+.rav{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.rinf{flex:1;min-width:0;}
+.rnm{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rst{font-size:10px;color:var(--t3);margin-top:1px;}
 .rdots{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px;}
-.rdot{width:18px;height:18px;border-radius:5px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;animation:di 0.4s cubic-bezier(0.34,1.56,0.64,1) backwards;}
+.rd{width:16px;height:16px;border-radius:4px;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:700;animation:di 0.3s cubic-bezier(0.34,1.56,0.64,1) backwards;}
 @keyframes di{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-.rdot.P{background:var(--greenBg);color:var(--green);border:1px solid rgba(0,230,118,0.15);}
-.rdot.N{background:var(--yellowBg);color:var(--yellow);border:1px solid rgba(255,214,0,0.15);}
-.rdot.D{background:var(--redBg);color:var(--red);border:1px solid rgba(255,82,82,0.15);}
-.rstreak{font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;white-space:nowrap;}
+.rd.P{background:var(--greenBg);color:var(--green);border:1px solid var(--greenBd);}
+.rd.N{background:var(--yellowBg);color:var(--yellow);border:1px solid var(--yellowBd);}
+.rd.D{background:var(--redBg);color:var(--red);border:1px solid var(--redBd);}
+.rstrk{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;}
+
+/* Rep detail panel */
+.rep-detail{background:var(--bg3);border:1px solid var(--border);border-radius:12px;margin:8px 0 14px;padding:14px;animation:si 0.35s cubic-bezier(0.16,1,0.3,1);}
+@keyframes si{from{transform:translateY(-8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.rep-detail-h{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.rep-detail-h .rav{width:36px;height:36px;font-size:14px;}
+.rep-detail-name{font-size:14px;font-weight:700;}
+.rep-detail-stats{display:flex;gap:12px;font-size:11px;color:var(--t2);}
+.rep-detail-stats b{color:var(--t1);}
+.rep-enc-list{max-height:200px;overflow-y:auto;}
+.rep-enc-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;font-size:10px;color:var(--t2);border-bottom:1px solid rgba(255,255,255,0.03);}
+.rep-enc-item:last-child{border-bottom:none;}
+.rep-enc-item:hover{background:rgba(255,255,255,0.02);}
+.rep-enc-time{color:var(--t3);min-width:40px;}
+.rep-enc-proc{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rep-enc-nps{font-weight:700;min-width:32px;text-align:right;}
 
 /* ═══ FEED ═══ */
-.feed{max-height:460px;overflow-y:auto;padding-right:4px;}
-.feed::-webkit-scrollbar{width:3px;}
-.feed::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px;}
-.acard{padding:14px;border-radius:12px;margin-bottom:8px;border:1px solid;animation:si 0.5s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden;}
-@keyframes si{from{transform:translateX(50px);opacity:0}to{transform:translateX(0);opacity:1}}
-.acard.det{background:var(--redBg);border-color:rgba(255,82,82,0.15);}
-.acard.pro{background:var(--greenBg);border-color:rgba(0,230,118,0.15);}
-.acard.neu{background:var(--yellowBg);border-color:rgba(255,214,0,0.15);}
-.acard.pat{background:var(--indigoBg);border-color:rgba(83,109,254,0.15);}
-.acard.ach{background:linear-gradient(135deg,rgba(179,136,255,0.1),rgba(0,229,255,0.06));border-color:rgba(179,136,255,0.2);}
-.ah{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
-.ai{font-size:16px;}
-.at{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;}
-.atm{font-size:9px;color:var(--t3);margin-left:auto;}
-.ab{font-size:11px;line-height:1.5;color:var(--t2);}
-.ab strong{color:var(--t1);font-weight:600;}
-.espejo{margin-top:8px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);}
-.espejo-t{font-size:9px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}
-.espejo-i{font-size:10px;color:var(--t2);margin-bottom:2px;}
-.pbox{margin-top:8px;padding:8px 10px;border-radius:9px;background:rgba(83,109,254,0.06);border:1px solid rgba(83,109,254,0.1);}
-.pbox-t{font-size:9px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;}
+.feed-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+.feed-hdr{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.feed-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t2);display:flex;align-items:center;gap:8px;}
+.feed-scroll{max-height:340px;overflow-y:auto;padding:0 18px 14px;}
+.fc{padding:12px;border-radius:10px;margin-bottom:6px;border:1px solid;animation:fci 0.4s cubic-bezier(0.16,1,0.3,1);}
+@keyframes fci{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
+.fc.pro{background:var(--greenBg);border-color:var(--greenBd);}
+.fc.det{background:var(--redBg);border-color:var(--redBd);}
+.fc.neu{background:var(--yellowBg);border-color:var(--yellowBd);}
+.fc.pat{background:var(--indigoBg);border-color:rgba(83,109,254,0.15);}
+.fch{display:flex;align-items:center;gap:5px;margin-bottom:4px;}
+.fci{font-size:14px;}
+.fct{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;}
+.fctime{font-size:8px;color:var(--t3);margin-left:auto;}
+.fcb{font-size:10px;line-height:1.5;color:var(--t2);}
+.fcb b{color:var(--t1);font-weight:600;}
+.espejo{margin-top:6px;padding:7px 9px;border-radius:7px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);}
+.espejo-t{font-size:8px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:3px;}
+.espejo-i{font-size:9px;color:var(--t2);margin-bottom:1px;}
+.pbox{margin-top:6px;padding:7px 9px;border-radius:7px;background:rgba(83,109,254,0.05);border:1px solid rgba(83,109,254,0.08);}
+.pbox-t{font-size:8px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:2px;}
 
 /* ═══ TABLE ═══ */
-.enc-table{width:100%;border-collapse:collapse;font-size:11px;}
-.enc-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--t3);border-bottom:1px solid var(--border);}
-.enc-table td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--t2);}
-.enc-table tr:hover td{background:rgba(255,255,255,0.02);}
-.nps-pill{padding:2px 8px;border-radius:6px;font-weight:700;font-size:10px;}
-.nps-pill.p{background:var(--greenBg);color:var(--green);}
-.nps-pill.n{background:var(--yellowBg);color:var(--yellow);}
-.nps-pill.d{background:var(--redBg);color:var(--red);}
-.table-wrap{max-height:240px;overflow-y:auto;border-radius:12px;border:1px solid var(--border);}
-.table-wrap::-webkit-scrollbar{width:3px;}
-.table-wrap::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px;}
+.tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+.tbl-hdr{padding:14px 18px;}
+.tbl-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t2);}
+.tbl-scroll{max-height:280px;overflow-y:auto;}
+.etbl{width:100%;border-collapse:collapse;font-size:10px;}
+.etbl th{text-align:left;padding:7px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--t3);border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:1;}
+.etbl td{padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.02);color:var(--t2);}
+.etbl tr:hover td{background:rgba(255,255,255,0.015);}
+.npill{padding:2px 7px;border-radius:5px;font-weight:700;font-size:9px;}
+.npill.p{background:var(--greenBg);color:var(--green);}
+.npill.n{background:var(--yellowBg);color:var(--yellow);}
+.npill.d{background:var(--redBg);color:var(--red);}
+
+/* ═══ TOAST (non-intrusive achievement) ═══ */
+.toast-container{position:fixed;top:16px;right:16px;z-index:1100;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;backdrop-filter:blur(16px);border:1px solid rgba(179,136,255,0.25);background:linear-gradient(135deg,rgba(179,136,255,0.15),rgba(0,229,255,0.08));box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:toastIn 0.5s cubic-bezier(0.16,1,0.3,1),toastOut 0.4s ease 6.6s forwards;max-width:340px;}
+@keyframes toastIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(120%)}}
+.toast-emoji{font-size:28px;flex-shrink:0;}
+.toast-body{flex:1;}
+.toast-title{font-size:11px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.toast-desc{font-size:10px;color:var(--t2);margin-top:2px;}
+.toast-bar{height:3px;border-radius:2px;background:rgba(179,136,255,0.3);margin-top:6px;overflow:hidden;}
+.toast-bar-fill{height:100%;background:var(--purple);border-radius:2px;animation:barShrink 7s linear forwards;}
+@keyframes barShrink{from{width:100%}to{width:0%}}
 
 /* ═══ EMPTY STATE ═══ */
-.empty-state{text-align:center;padding:50px 20px;}
-.empty-emoji{font-size:56px;margin-bottom:12px;animation:bounce 1s ease infinite alternate;}
-@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
-.empty-title{font-size:18px;font-weight:700;margin-bottom:6px;}
-.empty-sub{font-size:13px;color:var(--t2);line-height:1.6;}
+.empty{text-align:center;padding:40px 16px;}
+.empty-e{font-size:44px;margin-bottom:10px;animation:bounce 1s ease infinite alternate;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.empty-t{font-size:16px;font-weight:700;margin-bottom:4px;}
+.empty-s{font-size:12px;color:var(--t2);line-height:1.5;}
 
-/* ═══ SIM BTNS ═══ */
-.sim-sec{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;}
+/* ═══ SIM SECTION ═══ */
+.sim-sec{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;}
 .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-.sbtn{padding:12px 8px;border-radius:12px;border:1px solid;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
+.sbtn{padding:12px 8px;border-radius:10px;border:1px solid;font-family:Inter;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.25s;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;}
 .sbtn:hover{transform:translateY(-2px);}
 .sbtn:active{transform:scale(0.96);}
-.sbtn.gb{background:var(--greenBg);border-color:rgba(0,230,118,0.15);color:var(--green);}
-.sbtn.gb:hover{box-shadow:0 4px 16px var(--greenGl);}
-.sbtn.rb{background:var(--redBg);border-color:rgba(255,82,82,0.15);color:var(--red);}
-.sbtn.rb:hover{box-shadow:0 4px 16px var(--redGl);}
-.sbtn.yb{background:var(--yellowBg);border-color:rgba(255,214,0,0.15);color:var(--yellow);}
-.sbtn.yb:hover{box-shadow:0 4px 16px var(--yellowGl);}
+.sbtn.gb{background:var(--greenBg);border-color:var(--greenBd);color:var(--green);}
+.sbtn.rb{background:var(--redBg);border-color:var(--redBd);color:var(--red);}
+.sbtn.yb{background:var(--yellowBg);border-color:var(--yellowBd);color:var(--yellow);}
 .sbtn.ib{background:var(--indigoBg);border-color:rgba(83,109,254,0.15);color:var(--indigo);}
-.sbtn.ib:hover{box-shadow:0 4px 16px var(--indigoGl);}
 .sbtn.pb{background:rgba(179,136,255,0.08);border-color:rgba(179,136,255,0.15);color:var(--purple);}
-.sbtn.pb:hover{box-shadow:0 4px 16px rgba(179,136,255,0.25);}
-.sbtn-i{font-size:22px;}
-
-/* ═══ ACHIEVEMENT ═══ */
-.ach-ov{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;animation:fi 0.3s;}
-.ach-ov.show{display:flex;}
-@keyframes fi{from{opacity:0}to{opacity:1}}
-.ach-box{text-align:center;padding:44px 56px;border-radius:26px;background:linear-gradient(135deg,rgba(179,136,255,0.12),rgba(0,229,255,0.08));border:1px solid rgba(179,136,255,0.25);backdrop-filter:blur(20px);animation:ai2 0.6s cubic-bezier(0.34,1.56,0.64,1);}
-@keyframes ai2{from{transform:scale(0.5) rotate(-5deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
-.ach-emoji{font-size:64px;margin-bottom:14px;animation:bounce 0.8s ease infinite alternate;}
-.ach-title{font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;}
-.ach-desc{font-size:13px;color:var(--t2);}
-.ach-close{margin-top:18px;padding:9px 26px;border-radius:11px;border:1px solid rgba(179,136,255,0.25);background:rgba(179,136,255,0.08);color:var(--purple);font-weight:600;cursor:pointer;font-size:12px;transition:all 0.3s;}
-.ach-close:hover{background:rgba(179,136,255,0.15);}
-
-/* ═══ CIERRE ═══ */
-.ci-ov{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;}
-.ci-ov.show{display:flex;}
-.ci-box{width:90%;max-width:580px;padding:32px;border-radius:22px;background:var(--bg2);border:1px solid var(--border);animation:ai2 0.5s cubic-bezier(0.16,1,0.3,1);}
-.ci-hdr{text-align:center;margin-bottom:20px;}
-.ci-tl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--indigo);margin-bottom:4px;}
-.ci-hr{font-size:26px;font-weight:800;}
-.ci-week{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px;}
-.ci-day{text-align:center;padding:12px 6px;border-radius:12px;background:var(--glass);border:1px solid var(--border);transition:all 0.3s;}
-.ci-day.today{border-color:var(--indigo);background:var(--indigoBg);}
-.ci-day.future{opacity:0.3;}
-.ci-dn{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:4px;}
-.ci-de{font-size:20px;font-weight:800;margin-bottom:1px;}
-.ci-dp{font-size:12px;font-weight:600;}
-.ci-sum{text-align:center;padding:16px;border-radius:12px;background:var(--glass);border:1px solid var(--border);margin-bottom:16px;}
-.ci-sn{font-size:30px;font-weight:800;}
-.ci-sl{font-size:11px;color:var(--t2);margin-top:3px;}
-.ci-msg{text-align:center;font-size:13px;color:var(--t2);line-height:1.7;font-style:italic;}
-.ci-close{display:block;margin:18px auto 0;padding:9px 28px;border-radius:11px;border:1px solid var(--border);background:var(--glass);color:var(--t1);font-weight:600;cursor:pointer;font-size:12px;transition:all 0.3s;}
-.ci-close:hover{background:var(--glass2);}
+.sbtn-i{font-size:20px;}
 
 /* ═══ FLASH ═══ */
-.flash-ov{position:fixed;inset:0;pointer-events:none;z-index:999;opacity:0;transition:opacity 0.1s;}
-.flash-ov.r{background:rgba(255,82,82,0.12);}
-.flash-ov.g{background:rgba(0,230,118,0.08);}
-.flash-ov.show{opacity:1;}
+.flash{position:fixed;inset:0;pointer-events:none;z-index:999;opacity:0;transition:opacity 0.1s;}
+.flash.r{background:rgba(255,82,82,0.1);}
+.flash.g{background:rgba(0,230,118,0.06);}
+.flash.show{opacity:1;}
 
 /* ═══ CONFETTI ═══ */
-.confetti{position:fixed;z-index:1001;animation:cf linear forwards;pointer-events:none;}
+.confetti{position:fixed;z-index:1101;animation:cf linear forwards;pointer-events:none;}
 @keyframes cf{0%{transform:translateY(-10vh) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
 
 /* ═══ FOOTER ═══ */
-.ftr{text-align:center;padding:18px;font-size:10px;color:var(--t3);}
+.ftr{text-align:center;padding:16px;font-size:9px;color:var(--t3);}
 
 /* ═══ RESPONSIVE ═══ */
-@media(max-width:1100px){.trio{grid-template-columns:1fr;}.mgrid{grid-template-columns:1fr;}}
-@media(max-width:700px){.sgrid{grid-template-columns:repeat(2,1fr);}.hdr{flex-direction:column;gap:10px;text-align:center;}.ci-week{grid-template-columns:repeat(3,1fr);}.spills{flex-wrap:wrap;}}
-@keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-3px)}20%,40%,60%,80%{transform:translateX(3px)}}
+@media(max-width:1100px){.trio{grid-template-columns:1fr;}}
+@media(max-width:700px){
+  .sgrid{grid-template-columns:repeat(2,1fr);}
+  .hdr{flex-wrap:wrap;}.hdr-filters{width:100%;justify-content:center;}
+  .pills-row{flex-wrap:wrap;}.info-row{flex-direction:column;align-items:flex-start;}
+}
+@keyframes shake{0%,100%{transform:translateX(0)}10%,50%,90%{transform:translateX(-3px)}30%,70%{transform:translateX(3px)}}
 </style>
 </head>
 <body>
 <div id="particles"></div>
-<div class="flash-ov r" id="flR"></div>
-<div class="flash-ov g" id="flG"></div>
+<div class="flash r" id="flR"></div>
+<div class="flash g" id="flG"></div>
 
-<!-- ACHIEVEMENT -->
-<div class="ach-ov" id="achOv">
-  <div class="ach-box">
-    <div class="ach-emoji" id="achE">💎</div>
-    <div class="ach-title" id="achT">¡LOGRO DESBLOQUEADO!</div>
-    <div class="ach-desc" id="achD"></div>
-    <button class="ach-close" onclick="document.getElementById('achOv').classList.remove('show')">¡Genial! ✨</button>
+<!-- TOASTS (non-intrusive achievements) -->
+<div class="toast-container" id="toasts"></div>
+
+<!-- CIERRE MODAL -->
+<div id="ciOv" style="position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;">
+  <div style="width:90%;max-width:560px;padding:30px;border-radius:20px;background:var(--bg2);border:1px solid var(--border);animation:si 0.5s cubic-bezier(0.16,1,0.3,1);">
+    <div style="text-align:center;margin-bottom:18px;">
+      <div id="ciTL" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--indigo);margin-bottom:4px;"></div>
+      <div id="ciHR" style="font-size:24px;font-weight:800;"></div>
+    </div>
+    <div id="ciWK" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px;"></div>
+    <div style="text-align:center;padding:14px;border-radius:12px;background:var(--bg3);border:1px solid var(--border);margin-bottom:14px;">
+      <div id="ciSN" style="font-size:28px;font-weight:800;">--</div>
+      <div style="font-size:10px;color:var(--t2);margin-top:3px;">NPS Semana · Meta: 36.6%</div>
+    </div>
+    <div id="ciMG" style="text-align:center;font-size:12px;color:var(--t2);line-height:1.7;font-style:italic;"></div>
+    <button onclick="document.getElementById('ciOv').style.display='none'" style="display:block;margin:16px auto 0;padding:8px 24px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--t1);font-weight:600;cursor:pointer;font-size:12px;">Cerrar</button>
   </div>
 </div>
 
-<!-- CIERRE -->
-<div class="ci-ov" id="ciOv">
-  <div class="ci-box">
-    <div class="ci-hdr"><div class="ci-tl" id="ciTL"></div><div class="ci-hr" id="ciHR"></div></div>
-    <div class="ci-week" id="ciWK"></div>
-    <div class="ci-sum"><div class="ci-sn" id="ciSN">--</div><div class="ci-sl">NPS Acumulado Semana · Meta: 36.6%</div></div>
-    <div class="ci-msg" id="ciMG"></div>
-    <button class="ci-close" onclick="document.getElementById('ciOv').classList.remove('show')">Cerrar</button>
-  </div>
-</div>
-
-<!-- APP -->
+<!-- ═══ APP ═══ -->
 <div class="app">
 
   <!-- HEADER -->
   <div class="hdr">
-    <div class="hdr-l">
-      <div class="hdr-logo">N</div>
-      <div><div class="hdr-t">NPS Real Time Engine</div><div class="hdr-s">Publicaciones Sellers Mature · V2</div></div>
+    <div class="hdr-brand">
+      <div class="hdr-logo">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#2D3277"/><text x="12" y="16" text-anchor="middle" fill="#FFE600" font-size="12" font-weight="900" font-family="Inter">M</text></svg>
+      </div>
+      <div class="hdr-titles">
+        <div class="hdr-t1">mercado libre</div>
+        <div class="hdr-t2">MATURE PUBLICACIONES</div>
+      </div>
     </div>
-    <div class="live-b"><div class="live-d"></div>LIVE</div>
+    <div class="hdr-filters">
+      <div class="fpills" id="fpills">
+        <button class="fpill on" data-v="all" onclick="setFType(this,'all')">NPS</button>
+        <button class="fpill" data-v="P" onclick="setFType(this,'P')">🟢 Promotor</button>
+        <button class="fpill" data-v="N" onclick="setFType(this,'N')">🟡 Neutro</button>
+        <button class="fpill" data-v="D" onclick="setFType(this,'D')">🔴 Detractor</button>
+      </div>
+      <select class="hdr-sel" id="fLider" onchange="setFLider(this.value)">
+        <option value="all">Líder ·</option>
+      </select>
+      <select class="hdr-sel" id="fRep" onchange="setFRep(this.value)">
+        <option value="all">Rep ·</option>
+      </select>
+    </div>
   </div>
 
-  <!-- TABS -->
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('rt')" id="tabRT">📡 Real Time</div>
-    <div class="tab" onclick="switchTab('sim')" id="tabSIM">🎮 Simulador</div>
+  <!-- NAV TABS -->
+  <div class="nav-bar">
+    <div class="nav-tab on" onclick="switchTab('rt')" id="tabRT">📡 REAL TIME</div>
+    <div class="nav-tab" onclick="switchTab('sim')" id="tabSIM">🎮 SIMULADOR</div>
   </div>
 
-  <!-- ════════════════════════ -->
-  <!-- TAB: REAL TIME           -->
-  <!-- ════════════════════════ -->
-  <div class="tab-panel active" id="panelRT">
+  <div class="disclaimer">Los datos compartidos son ficticios para demostración. Las fuentes oficiales son las informadas en los bonos.</div>
 
-    <!-- Clock Row -->
-    <div class="clock-row">
-      <div class="clock">⏰ <b id="clockDisplay">--:--</b></div>
-      <div class="ayer-vs-hoy" id="ayerVsHoy">Ayer a esta hora: <b>8 enc · 37.5%</b> → Hoy: <b>0 enc · --%</b></div>
-      <div class="next-cierre" id="nextCierre">Próximo cierre: 12:25 PM</div>
+  <!-- ═══════════ TAB: REAL TIME ═══════════ -->
+  <div class="tab-p on" id="panelRT">
+
+    <div class="info-row">
+      <div class="clock">⏰ <b id="clockD">--:--</b></div>
+      <div class="info-pill" id="ayerVsHoy">Ayer a esta hora: <b>8 enc · 37.5%</b> → Hoy: <b>0 enc</b></div>
+      <div class="info-pill" id="nextCi">Próximo cierre: 12:25 PM</div>
     </div>
 
-    <!-- Trio layout -->
+    <!-- TRIO -->
     <div class="trio">
-      <!-- LEFT: Resultados Ayer -->
+      <!-- LEFT: Ayer -->
       <div class="trio-col">
-        <div class="trio-title">📋 Resultados Ayer</div>
-        <div class="big-enc-label">Encuestas</div>
-        <div class="big-enc" id="rtAyerEnc">25</div>
-        <div style="height:10px"></div>
-        <div class="big-nps">
-          <div class="big-nps-label">NPS Lineal</div>
-          <div class="big-nps-val" id="rtAyerNps" style="color:var(--green)">44.0%</div>
-        </div>
-        <div class="spills" id="rtAyerPills">
-          <div class="spill p">16</div>
-          <div class="spill n">4</div>
-          <div class="spill d">5</div>
-        </div>
-        <div class="top-card">
-          <div class="top-card-title">🏆 Top Rep Ayer</div>
-          <div class="top-card-row">
-            <span class="top-card-name">Valentina Ríos</span>
-            <span class="top-card-enc">4 enc</span>
-            <span class="top-card-nps" style="color:var(--green)">100%</span>
-          </div>
-        </div>
-        <div class="top-card">
-          <div class="top-card-title">🏅 Top Equipo Ayer</div>
-          <div class="top-card-row">
-            <span class="top-card-name">Equipo Lnocua</span>
-            <span class="top-card-enc">1 enc</span>
-            <span class="top-card-nps" style="color:var(--green)">100%</span>
-          </div>
-        </div>
+        <div class="trio-t">RESULTADOS AYER</div>
+        <div class="enc-big"><div class="enc-big-label">Encuestas</div><div class="enc-big-val">25</div></div>
+        <div class="nps-big"><div class="nps-big-label">Lineal Ayer</div><div class="nps-big-val" style="color:var(--green)">44.0 %</div></div>
+        <div class="pills-row"><div class="pill p">16</div><div class="pill n">4</div><div class="pill d">5</div></div>
+        <div class="tcard"><div class="tcard-t">TOP REPRESENTANTE AYER</div><div class="tcard-r"><span>REPRESENTANTE</span><span>ENCUESTAS 📊</span><span>NPS 📈</span></div><div class="tcard-r" style="margin-top:4px;"><span class="tcard-n">Valentina Ríos</span><span class="tcard-e">4</span><span class="tcard-nps" style="color:var(--green)">100 %</span></div></div>
+        <div class="tcard"><div class="tcard-t">TOP EQUIPO AYER</div><div class="tcard-r"><span>LÍDER</span><span>ENCUESTAS 📊</span><span>NPS 📈</span></div><div class="tcard-r" style="margin-top:4px;"><span class="tcard-n">Lnocua</span><span class="tcard-e">1</span><span class="tcard-nps" style="color:var(--green)">100 %</span></div></div>
       </div>
 
-      <!-- CENTER: Gráfica por Horas -->
+      <!-- CENTER: Chart -->
       <div class="trio-col">
-        <div class="trio-title">📈 Desarrollo del Día por Horas</div>
-        <div class="chart-wrap">
-          <canvas id="chartHoras"></canvas>
-          <div class="meta-line-label">Meta 36.6%</div>
-        </div>
+        <div class="trio-t">DESARROLLO DEL DÍA POR HORAS</div>
+        <div class="chart-w"><canvas id="chartH"></canvas><div class="meta-label">META 36.6%</div></div>
       </div>
 
       <!-- RIGHT: NPS Hoy -->
-      <div class="trio-col" id="rtHoyCol">
-        <div class="trio-title" style="justify-content:space-between;">
-          NPS Real Time
-          <div class="live-b" style="padding:4px 10px;font-size:10px;"><div class="live-d" style="width:7px;height:7px;"></div>LIVE</div>
+      <div class="trio-col">
+        <div class="live-hdr">
+          <div class="trio-t" style="margin-bottom:0;">NPS REAL TIME</div>
+          <div class="live-badge"><div class="live-dot"></div>LIVE</div>
         </div>
-        <div class="big-enc-label">Encuestas</div>
-        <div class="big-enc" id="rtHoyEnc">0</div>
-        <div style="height:10px"></div>
-        <div class="big-nps">
-          <div class="big-nps-label">NPS Lineal Hoy</div>
-          <div class="big-nps-val" id="rtHoyNps" style="color:var(--t3)">--%</div>
-        </div>
-        <div class="spills" id="rtHoyPills">
-          <div class="spill p" id="rtHP">0</div>
-          <div class="spill n" id="rtHN">0</div>
-          <div class="spill d" id="rtHD">0</div>
-        </div>
-        <div class="top-card">
-          <div class="top-card-title">🏆 Top Rep Hoy</div>
-          <div class="top-card-row" id="rtTopRepHoy">
-            <span style="color:var(--t3);font-size:11px;">Esperando encuestas...</span>
-          </div>
-        </div>
-        <div class="top-card">
-          <div class="top-card-title">🏅 Top Equipo Hoy</div>
-          <div class="top-card-row" id="rtTopEqHoy">
-            <span style="color:var(--t3);font-size:11px;">Esperando encuestas...</span>
-          </div>
-        </div>
+        <div class="enc-big"><div class="enc-big-label">Encuestas</div><div class="enc-big-val" id="hoyEnc">0</div></div>
+        <div class="nps-big"><div class="nps-big-label">Lineal Hoy</div><div class="nps-big-val" id="hoyNps" style="color:var(--t3)">--%</div></div>
+        <div class="pills-row"><div class="pill p" id="hoyP">0</div><div class="pill n" id="hoyN">0</div><div class="pill d" id="hoyD">0</div></div>
+        <div class="tcard"><div class="tcard-t">TOP REPRESENTANTE HOY</div><div id="topRepHoy"><div class="tcard-r"><span style="color:var(--t3);font-size:10px">Esperando encuestas...</span></div></div></div>
+        <div class="tcard"><div class="tcard-t">TOP EQUIPO HOY</div><div id="topEqHoy"><div class="tcard-r"><span style="color:var(--t3);font-size:10px">Esperando encuestas...</span></div></div></div>
       </div>
     </div>
 
     <!-- Thermo -->
-    <div class="thermo" id="rtThermo">🧊 Termómetro del equipo: <span style="margin-left:4px;" id="rtThermoText">Sin actividad aún — ¿Quién será el primer promotor del día? 🚀</span></div>
+    <div class="thermo" id="thermo">🧊 Termómetro del equipo: <b>Sin actividad — ¿Quién será el primer promotor del día? 🚀</b></div>
 
     <!-- NPS Bar -->
-    <div class="nps-bar-sec">
-      <div class="nps-bar-h">
-        <span class="nps-bar-l">NPS HOY</span>
-        <span class="nps-bar-v" id="rtBarVal" style="color:var(--t3)">--%</span>
+    <div class="nps-bar">
+      <div class="nps-bar-h"><span class="nps-bar-l">NPS HOY</span><span class="nps-bar-v" id="barV" style="color:var(--t3)">--%</span></div>
+      <div class="nps-track" style="position:relative"><div class="nps-fill" id="barF" style="width:50%;background:var(--t3)"></div><div class="nps-meta" style="left:68.3%"><span>Meta 36.6%</span></div></div>
+    </div>
+
+    <!-- Rachas Accordion -->
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <div class="acc-title">🔥 Rachas en Vivo <span class="acc-badge" id="rachaCount">0</span></div>
+        <div class="acc-arrow">▼</div>
       </div>
-      <div class="nps-track" style="position:relative">
-        <div class="nps-fill" id="rtBarFill" style="width:50%;background:var(--t3)"></div>
-        <div class="nps-meta" id="rtBarMeta" style="left:68.3%"><span>Meta 36.6%</span></div>
+      <div class="acc-body" id="accBody">
+        <div class="acc-inner" id="rachasBox">
+          <div class="empty"><div class="empty-e">🚀</div><div class="empty-t">¿Qué esperas?</div><div class="empty-s">Sé el primer promotor del día</div></div>
+        </div>
       </div>
     </div>
 
-    <!-- Rachas + Feed -->
-    <div class="mgrid">
-      <div class="scard">
-        <div class="stitle">🔥 Rachas en Vivo</div>
-        <div id="rtRachas">
-          <div class="empty-state">
-            <div class="empty-emoji">🚀</div>
-            <div class="empty-title">¿Qué esperas?</div>
-            <div class="empty-sub">Sé el primer promotor del día.<br>Cada encuesta cuenta, ¡arrancamos!</div>
-          </div>
-        </div>
-      </div>
-      <div class="scard">
-        <div class="stitle">📡 Feed en Tiempo Real</div>
-        <div class="feed" id="rtFeed">
-          <div class="empty-state" style="padding:30px 10px;">
-            <div class="empty-emoji" style="font-size:40px;">📡</div>
-            <div class="empty-title" style="font-size:15px;">Escuchando...</div>
-            <div class="empty-sub" style="font-size:12px;">Las alertas aparecerán aquí<br>cuando lleguen encuestas</div>
-          </div>
-        </div>
+    <!-- Feed -->
+    <div class="feed-wrap">
+      <div class="feed-hdr"><div class="feed-title">📡 Feed en Tiempo Real</div></div>
+      <div class="feed-scroll" id="feedBox">
+        <div class="empty" style="padding:24px 10px;"><div class="empty-e" style="font-size:32px;">📡</div><div class="empty-t" style="font-size:14px;">Escuchando...</div><div class="empty-s" style="font-size:11px;">Alertas aparecerán aquí</div></div>
       </div>
     </div>
 
     <!-- Table -->
-    <div class="scard">
-      <div class="stitle">📋 Encuestas del Día</div>
-      <div class="table-wrap">
-        <table class="enc-table">
-          <thead><tr><th>Hora</th><th>Caso</th><th>Líder</th><th>Rep</th><th>Solución</th><th>Comentario</th><th>NPS</th></tr></thead>
-          <tbody id="rtTableBody">
-            <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--t3)">Sin encuestas aún</td></tr>
-          </tbody>
-        </table>
+    <div class="tbl-wrap">
+      <div class="tbl-hdr"><div class="tbl-title">📋 Encuestas del Día</div></div>
+      <div class="tbl-scroll">
+        <table class="etbl"><thead><tr><th>Fecha</th><th>Caso</th><th>Líder</th><th>Representante</th><th>Solución</th><th>Comentario</th><th>NPS</th></tr></thead>
+        <tbody id="tblBody"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--t3)">Sin encuestas aún</td></tr></tbody></table>
       </div>
     </div>
-
   </div>
 
-  <!-- ════════════════════════ -->
-  <!-- TAB: SIMULADOR           -->
-  <!-- ════════════════════════ -->
-  <div class="tab-panel" id="panelSIM">
-
-    <!-- Sim Buttons -->
+  <!-- ═══════════ TAB: SIMULADOR ═══════════ -->
+  <div class="tab-p" id="panelSIM">
     <div class="sim-sec">
-      <div class="stitle">🎮 Panel de Simulación</div>
-      <p style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.5;">Cada botón simula un evento en tiempo real. Los datos se reflejan en la pestaña <b>Real Time</b>. ¡Pruébalos!</p>
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t2);margin-bottom:6px;display:flex;align-items:center;gap:6px;">🎮 Panel de Simulación</div>
+      <p style="font-size:11px;color:var(--t2);margin-bottom:12px;line-height:1.5;">Los eventos se reflejan en <b>Real Time</b>. ¡Pruébalos!</p>
       <div class="sgrid">
-        <button class="sbtn gb" onclick="simPromotor()"><span class="sbtn-i">🟢</span>Llega Promotor</button>
-        <button class="sbtn rb" onclick="simDetractor()"><span class="sbtn-i">🔴</span>Llega Detractor</button>
-        <button class="sbtn yb" onclick="simNeutro()"><span class="sbtn-i">🟡</span>Llega Neutro</button>
-        <button class="sbtn ib" onclick="simCierreAM()"><span class="sbtn-i">🌅</span>Cierre AM 12:25</button>
-        <button class="sbtn ib" onclick="simCierrePM()"><span class="sbtn-i">🌇</span>Cierre PM 6:30</button>
+        <button class="sbtn gb" onclick="simP()"><span class="sbtn-i">🟢</span>Llega Promotor</button>
+        <button class="sbtn rb" onclick="simD()"><span class="sbtn-i">🔴</span>Llega Detractor</button>
+        <button class="sbtn yb" onclick="simN()"><span class="sbtn-i">🟡</span>Llega Neutro</button>
+        <button class="sbtn ib" onclick="simCierre('am')"><span class="sbtn-i">🌅</span>Cierre AM 12:25</button>
+        <button class="sbtn ib" onclick="simCierre('pm')"><span class="sbtn-i">🌇</span>Cierre PM 6:30</button>
         <button class="sbtn pb" onclick="simLogro()"><span class="sbtn-i">🏆</span>Logro</button>
         <button class="sbtn pb" onclick="simPatron()"><span class="sbtn-i">🧠</span>Alerta Patrón</button>
-        <button class="sbtn" style="background:var(--glass);border-color:var(--border);color:var(--t2);" onclick="simAutoPlay()"><span class="sbtn-i">⚡</span>Auto-Play (Demo)</button>
-      </div>
-    </div>
-
-    <!-- Mirror of stats -->
-    <div class="nps-bar-sec">
-      <div class="nps-bar-h"><span class="nps-bar-l">NPS HOY (Simulación)</span><span class="nps-bar-v" id="simBarVal" style="color:var(--t3)">--%</span></div>
-      <div class="nps-track" style="position:relative"><div class="nps-fill" id="simBarFill" style="width:50%;background:var(--t3)"></div><div class="nps-meta" style="left:68.3%"><span>Meta 36.6%</span></div></div>
-    </div>
-
-    <div class="mgrid">
-      <div class="scard">
-        <div class="stitle">🔥 Rachas (Simulación)</div>
-        <div id="simRachas">
-          <div class="empty-state"><div class="empty-emoji">🎮</div><div class="empty-title">Simulador listo</div><div class="empty-sub">Oprime los botones para ver<br>cómo funciona el engine</div></div>
-        </div>
-      </div>
-      <div class="scard">
-        <div class="stitle">📡 Feed (Simulación)</div>
-        <div class="feed" id="simFeed">
-          <div class="empty-state" style="padding:30px 10px;"><div class="empty-emoji" style="font-size:40px;">🎮</div><div class="empty-title" style="font-size:15px;">Listo para simular</div><div class="empty-sub" style="font-size:12px;">Las alertas simuladas<br>aparecerán aquí</div></div>
-        </div>
+        <button class="sbtn" style="background:var(--glass);border-color:var(--border);color:var(--t2);" onclick="simAuto()"><span class="sbtn-i">⚡</span>Auto-Play</button>
       </div>
     </div>
   </div>
 
-  <div class="ftr">hecho por juan sebastian guerrero rodriguez, hecho con el 💛<br><span style="font-size:9px;opacity:0.5;">NPS Real Time Engine V2 · Simulador · 2026</span></div>
+  <div class="ftr">hecho por juan sebastian guerrero rodriguez, hecho con el 💛<br><span style="opacity:0.5">NPS Real Time Engine V3 · 2026</span></div>
 </div>
 
-<!-- ═══════════════════════════════════════ -->
-<!--  PARTE 2 DEL SCRIPT EN SIGUIENTE MSG  -->
-<!-- ═══════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════ -->
+<!-- SCRIPT (PARTE 2) EN SIGUIENTE MENSAJE       -->
+<!-- ════════════════════════════════════════════ -->
 
   <script>
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 // DATA FICTICIA
-// ═══════════════════════════════════════════
-const LIDERES = [
-  { id:'lnocua', name:'Lnocua' },
-  { id:'nimoreno', name:'Nimoreno' },
-  { id:'marmendez', name:'Marmendez' },
-  { id:'jpuyo', name:'Jpuyo' },
-  { id:'lflorez', name:'Lflorez' }
+// ═══════════════════════════════════════
+const LID=[
+  {id:'lnocua',n:'Lnocua'},{id:'nimoreno',n:'Nimoreno'},{id:'marmendez',n:'Marmendez'},
+  {id:'jpuyo',n:'Jpuyo'},{id:'lflorez',n:'Lflorez'}
 ];
-
-const REPS = [
-  { id:'pepitoperez', name:'Pepito Pérez', avatar:'PP', color:'#536dfe', lider:'marmendez' },
-  { id:'mariagarcia', name:'María García', avatar:'MG', color:'#00e676', lider:'marmendez' },
-  { id:'carlosruiz', name:'Carlos Ruiz', avatar:'CR', color:'#ff5252', lider:'nimoreno' },
-  { id:'anamoreno', name:'Ana Moreno', avatar:'AM', color:'#b388ff', lider:'lnocua' },
-  { id:'luisdiaz', name:'Luis Díaz', avatar:'LD', color:'#ffd600', lider:'jpuyo' },
-  { id:'sofialopez', name:'Sofía López', avatar:'SL', color:'#00e5ff', lider:'nimoreno' },
-  { id:'diegotorres', name:'Diego Torres', avatar:'DT', color:'#ff9100', lider:'lflorez' },
-  { id:'valeriacast', name:'Valeria Castro', avatar:'VC', color:'#69f0ae', lider:'jpuyo' },
-  { id:'andresrios', name:'Andrés Ríos', avatar:'AR', color:'#ea80fc', lider:'lflorez' },
-  { id:'camilasanch', name:'Camila Sánchez', avatar:'CS', color:'#ff80ab', lider:'marmendez' },
-  { id:'julianmart', name:'Julián Martínez', avatar:'JM', color:'#80d8ff', lider:'lnocua' },
-  { id:'laurabecerr', name:'Laura Becerra', avatar:'LB', color:'#ccff90', lider:'jpuyo' }
+const REPS=[
+  {id:'pepitoperez',n:'Pepito Pérez',av:'PP',c:'#536dfe',l:'marmendez'},
+  {id:'mariagarcia',n:'María García',av:'MG',c:'#00e676',l:'marmendez'},
+  {id:'carlosruiz',n:'Carlos Ruiz',av:'CR',c:'#ff5252',l:'nimoreno'},
+  {id:'anamoreno',n:'Ana Moreno',av:'AM',c:'#b388ff',l:'lnocua'},
+  {id:'luisdiaz',n:'Luis Díaz',av:'LD',c:'#ffd600',l:'jpuyo'},
+  {id:'sofialopez',n:'Sofía López',av:'SL',c:'#00e5ff',l:'nimoreno'},
+  {id:'diegotorres',n:'Diego Torres',av:'DT',c:'#ff9100',l:'lflorez'},
+  {id:'valeriacast',n:'Valeria Castro',av:'VC',c:'#69f0ae',l:'jpuyo'},
+  {id:'andresrios',n:'Andrés Ríos',av:'AR',c:'#ea80fc',l:'lflorez'},
+  {id:'camilasan',n:'Camila Sánchez',av:'CS',c:'#ff80ab',l:'marmendez'},
+  {id:'julianmart',n:'Julián Martínez',av:'JM',c:'#80d8ff',l:'lnocua'},
+  {id:'laurabece',n:'Laura Becerra',av:'LB',c:'#ccff90',l:'jpuyo'}
 ];
-
-const PROCESOS = [
-  'Reputación ME - Reclamo afecta la reputación',
-  'PR - Propiedad Intelectual - Denuncia',
-  'Gestión de Publicación - Modificar variantes',
-  'Potenciador - Eventos comerciales T1, T2 y T3',
-  'Calidad de Fotos - Mejorar fotos del producto',
-  'Reputación ME Ventas - Logística Places - Excluimos',
-  'Antes de Publicar - Corrección de catálogo',
-  'PR Técnica - Datos técnicos del producto',
-  'PR Art Prohib - Artículos prohibidos',
-  'Gestión Pub - Moderación de publicación'
+const PROC=[
+  'Reputación ME - Reclamo afecta la reputación','PR - Propiedad Intelectual - Denuncia',
+  'Gestión de Publicación - Modificar variantes','Potenciador - Eventos comerciales T1, T2 y T3',
+  'Calidad de Fotos - Mejorar fotos del producto','Reputación ME Ventas: Logística Places - Excluimos',
+  'Antes de Publicar - Corrección de catálogo','PR Técnica - Datos técnicos del producto',
+  'PR Art Prohib - Artículos prohibidos','Gestión Pub - Moderación de publicación'
 ];
-const SOLUCIONES = [
-  'Analizamos reputación y mantenemos impacto','Denuncia recibida - Procedemos con análisis',
+const SOL=[
+  'Analizamos reputación y mantenemos impacto','Denuncia recibida - Procedemos análisis',
   'Modificar variantes, fotos y precio','Beneficios del potenciador explicados',
-  'Catálogo - Sugerencia de corrección enviada','Logística Places - Excluimos',
+  'Catálogo - Sugerencia de corrección','Logística Places - Excluimos',
   'Fotos actualizadas correctamente','Datos técnicos corregidos',
   'Artículo restringido - Alternativas','Publicación moderada exitosamente'
 ];
-const COM_P = ['Pudieron solucionar mi problema, excelente','Muy buena ayuda, resolvieron rápido','La asesora fue muy amable y clara','Fue buena, me explicaron todo','Excelente servicio, en pocos minutos resuelto','Me ayudaron perfecto con mi publicación','Súper rápido y efectivo, gracias'];
-const COM_D = ['No me solucionaron el problema','No utilizan el criterio ni el sentido común','Tienen un speech prearmado y no se salen del texto','No terminó de ayudarme, me cortó la conversación','El vendedor siempre pierde dinero y tiempo','Tardaron demasiado y no resolvieron','Me pasaron de asesor en asesor sin solución'];
-const COM_N = ['Fue normal, ni bien ni mal','Resolvieron pero tardaron bastante','Más o menos, esperaba algo mejor','Atención regular, el proceso es largo','No fue mala pero tampoco excelente'];
-
-const LOGROS = [
-  { emoji:'💎', title:'RACHA PERFECTA', desc:'5 promotores seguidos sin parar' },
-  { emoji:'🔥', title:'EN LLAMAS', desc:'3 promotores consecutivos' },
-  { emoji:'🛡️', title:'RECUPERACIÓN ÉPICA', desc:'Promotor después de un detractor' },
-  { emoji:'⭐', title:'ESTRELLA DEL DÍA', desc:'Mayor NPS del equipo con 5+ encuestas' },
-  { emoji:'🚀', title:'PRIMER PROMOTOR', desc:'¡Arrancó el día con todo!' },
-  { emoji:'👑', title:'INVICTO', desc:'0 detractores en todo el día' }
+const CP=['Pudieron solucionar mi problema, excelente','Muy buena ayuda, resolvieron rápido','La asesora fue muy amable y clara','Fue buena, me explicaron todo','Excelente servicio, en pocos minutos resuelto','Me ayudaron perfecto con mi publicación','Súper rápido y efectivo, gracias'];
+const CD=['No me solucionaron el problema','No utilizan el criterio ni el sentido común','Tienen un speech prearmado y no se salen del texto','No terminó de ayudarme, me cortó la conversación','El vendedor siempre pierde dinero y tiempo','Tardaron demasiado y no resolvieron','Me pasaron de asesor en asesor sin solución'];
+const CN=['Fue normal, ni bien ni mal','Resolvieron pero tardaron bastante','Más o menos, esperaba algo mejor','Atención regular, el proceso es largo','No fue mala pero tampoco excelente'];
+const LOGROS=[
+  {e:'💎',t:'RACHA PERFECTA',d:'5 promotores seguidos sin parar'},
+  {e:'🔥',t:'EN LLAMAS',d:'3 promotores consecutivos'},
+  {e:'🛡️',t:'RECUPERACIÓN ÉPICA',d:'Promotor después de detractor'},
+  {e:'⭐',t:'ESTRELLA DEL DÍA',d:'Mayor NPS con 5+ encuestas'},
+  {e:'🚀',t:'PRIMER PROMOTOR',d:'¡Arrancó el día con todo!'},
+  {e:'👑',t:'INVICTO',d:'0 detractores en todo el día'}
 ];
+const WK=[{d:'Lun',e:14,p:8,n:2,dd:4},{d:'Mar',e:18,p:11,n:3,dd:4},{d:'Mié',e:0,p:0,n:0,dd:0},{d:'Jue',e:0,p:0,n:0,dd:0},{d:'Vie',e:0,p:0,n:0,dd:0}];
+const TI=2;
 
-const WEEK = [
-  { day:'Lun', enc:14, p:8, n:2, d:4 },
-  { day:'Mar', enc:18, p:11, n:3, d:4 },
-  { day:'Mié', enc:0, p:0, n:0, d:0 },
-  { day:'Jue', enc:0, p:0, n:0, d:0 },
-  { day:'Vie', enc:0, p:0, n:0, d:0 }
-];
-const TODAY_IDX = 2;
-
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════
-let S = {
-  p:0, n:0, d:0,
-  rachas: {},
-  encuestas: [],
-  feedStarted: false,
-  caseN: 436200000,
-  hourN: 8, minN: 5,
-  horaData: {},
-  // Filters
-  filterType: 'all', // all, P, N, D
-  filterLider: 'all',
-  filterRep: 'all'
-};
-REPS.forEach(r => S.rachas[r.id] = []);
+// ═══════════════════════════════════════
+let S={p:0,n:0,d:0,rachas:{},enc:[],feedOn:false,cN:436200000,hN:8,mN:5,selRep:null,fType:'all',fLid:'all',fRep:'all'};
+REPS.forEach(r=>S.rachas[r.id]=[]);
 
-// ═══════════════════════════════════════════
-// PARTICLES
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
 (function(){
-  const c=document.getElementById('particles');
+  // Particles
+  const pc=document.getElementById('particles');
   const cols=['var(--green)','var(--indigo)','var(--purple)','var(--cyan)','var(--yellow)'];
-  for(let i=0;i<25;i++){const p=document.createElement('div');p.className='particle';const s=Math.random()*3+2;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cols[i%5]};animation-duration:${Math.random()*14+10}s;animation-delay:${Math.random()*8}s;`;c.appendChild(p);}
+  for(let i=0;i<20;i++){const p=document.createElement('div');p.className='ptc';const s=Math.random()*3+1.5;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cols[i%5]};animation-duration:${Math.random()*12+10}s;animation-delay:${Math.random()*8}s;`;pc.appendChild(p);}
+  // Populate selects
+  const ls=document.getElementById('fLider');
+  LID.forEach(l=>{const o=document.createElement('option');o.value=l.id;o.textContent=l.n;ls.appendChild(o);});
+  populateRepSel('all');
+  // Clock
+  updClock();setInterval(updClock,1000);
+  // Chart
+  initChart();
+  // Pre-populate
+  prePop();
+  apply();
 })();
 
-// ═══════════════════════════════════════════
+function populateRepSel(lid){
+  const s=document.getElementById('fRep');
+  const reps=lid==='all'?REPS:REPS.filter(r=>r.l===lid);
+  s.innerHTML='<option value="all">Rep ·</option>'+reps.map(r=>`<option value="${r.id}">${r.n}</option>`).join('');
+}
+
+// ═══════════════════════════════════════
 // TABS
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 function switchTab(t){
-  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(e=>e.classList.remove('active'));
-  document.getElementById(t==='rt'?'tabRT':'tabSIM').classList.add('active');
-  document.getElementById(t==='rt'?'panelRT':'panelSIM').classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.tab-p').forEach(e=>e.classList.remove('on'));
+  document.getElementById(t==='rt'?'tabRT':'tabSIM').classList.add('on');
+  document.getElementById(t==='rt'?'panelRT':'panelSIM').classList.add('on');
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 // CLOCK
-// ═══════════════════════════════════════════
-function updateClock(){
+// ═══════════════════════════════════════
+function updClock(){
   const now=new Date();
-  document.getElementById('clockDisplay').textContent=now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('clockD').textContent=now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   const h=now.getHours(),m=now.getMinutes();
-  let next='';
-  if(h<12||(h===12&&m<25)) next=`Próximo cierre: 12:25 PM en ${12-h-1}h ${60-m}m`;
-  else if(h<18||(h===18&&m<30)) next=`Próximo cierre: 6:30 PM en ${18-h-1}h ${60-m}m`;
-  else next='Cierres del día completados ✅';
-  document.getElementById('nextCierre').textContent=next;
-  // Auto reset at midnight
-  if(h===0&&m===0&&now.getSeconds()<2) autoReset();
+  let nx='';
+  if(h<12||(h===12&&m<25))nx=`Próximo cierre: 12:25 PM`;
+  else if(h<18||(h===18&&m<30))nx=`Próximo cierre: 6:30 PM`;
+  else nx='Cierres completados ✅';
+  document.getElementById('nextCi').textContent=nx;
+  if(h===0&&m===0&&now.getSeconds()<2)autoReset();
 }
-setInterval(updateClock,1000);
-updateClock();
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 // FILTERS
-// ═══════════════════════════════════════════
-function buildFilters(){
-  // Add filter row before trio if not exists
-  if(document.getElementById('filterRow')) return;
-  const row=document.createElement('div');
-  row.id='filterRow';
-  row.style.cssText='display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;padding:0 4px;';
+// ═══════════════════════════════════════
+function setFType(btn,v){S.fType=v;document.querySelectorAll('.fpill').forEach(b=>b.classList.remove('on'));btn.classList.add('on');apply();}
+function setFLider(v){S.fLid=v;S.fRep='all';populateRepSel(v);apply();}
+function setFRep(v){S.fRep=v;apply();}
+function gf(){return S.enc.filter(e=>{if(S.fType!=='all'&&e.t!==S.fType)return false;if(S.fLid!=='all'&&e.lid!==S.fLid)return false;if(S.fRep!=='all'&&e.rid!==S.fRep)return false;return true;});}
 
-  // NPS Type filter
-  row.innerHTML=`
-    <div style="display:flex;gap:4px;background:var(--glass);border:1px solid var(--border);border-radius:10px;padding:3px;">
-      <button class="fbtn active" data-f="all" onclick="setFilter('type',this,'all')">Todos</button>
-      <button class="fbtn" data-f="P" onclick="setFilter('type',this,'P')" style="--fc:var(--green)">🟢 Promotor</button>
-      <button class="fbtn" data-f="N" onclick="setFilter('type',this,'N')" style="--fc:var(--yellow)">🟡 Neutro</button>
-      <button class="fbtn" data-f="D" onclick="setFilter('type',this,'D')" style="--fc:var(--red)">🔴 Detractor</button>
-    </div>
-    <select id="fLider" onchange="setFilter('lider',null,this.value)" style="padding:7px 12px;border-radius:9px;background:var(--bg3);border:1px solid var(--border);color:var(--t1);font-family:Inter;font-size:12px;font-weight:600;cursor:pointer;">
-      <option value="all">👥 Todos los Líderes</option>
-      ${LIDERES.map(l=>`<option value="${l.id}">${l.name}</option>`).join('')}
-    </select>
-    <select id="fRep" onchange="setFilter('rep',null,this.value)" style="padding:7px 12px;border-radius:9px;background:var(--bg3);border:1px solid var(--border);color:var(--t1);font-family:Inter;font-size:12px;font-weight:600;cursor:pointer;">
-      <option value="all">👤 Todos los Reps</option>
-      ${REPS.map(r=>`<option value="${r.id}">${r.name}</option>`).join('')}
-    </select>
-  `;
-
-  // Insert after clock-row
-  const clockRow=document.querySelector('.clock-row');
-  clockRow.after(row);
-
-  // Inject filter button styles
-  const st=document.createElement('style');
-  st.textContent=`.fbtn{padding:5px 12px;border-radius:8px;border:none;font-family:Inter;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.25s;background:transparent;color:var(--t2);}
-  .fbtn:hover{background:rgba(255,255,255,0.06);color:var(--t1);}
-  .fbtn.active{background:var(--glass2);color:var(--t1);box-shadow:0 1px 6px rgba(0,0,0,0.15);}
-  .fbtn[data-f="P"].active{background:var(--greenBg);color:var(--green);}
-  .fbtn[data-f="N"].active{background:var(--yellowBg);color:var(--yellow);}
-  .fbtn[data-f="D"].active{background:var(--redBg);color:var(--red);}`;
-  document.head.appendChild(st);
+// ═══════════════════════════════════════
+// ACCORDION
+// ═══════════════════════════════════════
+function toggleAcc(el){
+  const body=el.nextElementSibling;
+  const arrow=el.querySelector('.acc-arrow');
+  body.classList.toggle('open');
+  arrow.style.transform=body.classList.contains('open')?'rotate(180deg)':'rotate(0)';
 }
 
-function setFilter(kind, btn, val){
-  if(kind==='type'){
-    S.filterType=val;
-    document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-  } else if(kind==='lider'){
-    S.filterLider=val;
-    // Update rep dropdown
-    const repSel=document.getElementById('fRep');
-    const filtered=val==='all'?REPS:REPS.filter(r=>r.lider===val);
-    repSel.innerHTML=`<option value="all">👤 Todos los Reps</option>`+filtered.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
-    S.filterRep='all';
-  } else if(kind==='rep'){
-    S.filterRep=val;
-  }
-  applyFilters();
-}
+// ═══════════════════════════════════════
+// MAIN APPLY (re-renders everything)
+// ═══════════════════════════════════════
+function apply(){
+  const f=gf();
+  const pC=f.filter(e=>e.t==='P').length;
+  const nC=f.filter(e=>e.t==='N').length;
+  const dC=f.filter(e=>e.t==='D').length;
+  const tot=f.length;
+  const nps=tot>0?((pC-dC)/tot*100):null;
 
-function getFiltered(){
-  return S.encuestas.filter(e=>{
-    if(S.filterType!=='all'&&e.type!==S.filterType) return false;
-    if(S.filterLider!=='all'&&e.lider!==S.filterLider) return false;
-    if(S.filterRep!=='all'&&e.repId!==S.filterRep) return false;
-    return true;
-  });
-}
+  // Hoy col
+  document.getElementById('hoyEnc').textContent=tot;
+  document.getElementById('hoyP').textContent=pC;
+  document.getElementById('hoyN').textContent=nC;
+  document.getElementById('hoyD').textContent=dC;
 
-function applyFilters(){
-  const f=getFiltered();
-  const pC=f.filter(e=>e.type==='P').length;
-  const nC=f.filter(e=>e.type==='N').length;
-  const dC=f.filter(e=>e.type==='D').length;
-  const total=f.length;
-  const nps=total>0?((pC-dC)/total*100):null;
-
-  // Update Hoy column
-  document.getElementById('rtHoyEnc').textContent=total;
-  document.getElementById('rtHP').textContent=pC;
-  document.getElementById('rtHN').textContent=nC;
-  document.getElementById('rtHD').textContent=dC;
-
-  const npsEl=document.getElementById('rtHoyNps');
-  const barVal=document.getElementById('rtBarVal');
-  const barFill=document.getElementById('rtBarFill');
-  const simBarVal=document.getElementById('simBarVal');
-  const simBarFill=document.getElementById('simBarFill');
-
+  const nE=document.getElementById('hoyNps');
+  const bV=document.getElementById('barV');
+  const bF=document.getElementById('barF');
   if(nps===null){
-    npsEl.textContent='--%'; npsEl.style.color='var(--t3)';
-    barVal.textContent='--%'; barVal.style.color='var(--t3)';
-    barFill.style.width='50%'; barFill.style.background='var(--t3)';
-    simBarVal.textContent='--%'; simBarVal.style.color='var(--t3)';
-    simBarFill.style.width='50%'; simBarFill.style.background='var(--t3)';
+    nE.textContent='--%';nE.style.color='var(--t3)';
+    bV.textContent='--%';bV.style.color='var(--t3)';
+    bF.style.width='50%';bF.style.background='var(--t3)';
   } else {
     const c=nps>=36.6?'var(--green)':nps>=0?'var(--yellow)':'var(--red)';
     const pct=Math.max(2,Math.min(100,(nps+100)/200*100));
-    npsEl.textContent=nps.toFixed(1)+'%'; npsEl.style.color=c;
-    barVal.textContent=nps.toFixed(1)+'%'; barVal.style.color=c;
-    barFill.style.width=pct+'%'; barFill.style.background=`linear-gradient(90deg,${c}88,${c})`;
-    simBarVal.textContent=nps.toFixed(1)+'%'; simBarVal.style.color=c;
-    simBarFill.style.width=pct+'%'; simBarFill.style.background=`linear-gradient(90deg,${c}88,${c})`;
+    nE.textContent=nps.toFixed(1)+' %';nE.style.color=c;
+    bV.textContent=nps.toFixed(1)+'%';bV.style.color=c;
+    bF.style.width=pct+'%';bF.style.background=`linear-gradient(90deg,${c}88,${c})`;
   }
 
   // Ayer vs hoy
-  document.getElementById('ayerVsHoy').innerHTML=`Ayer a esta hora: <b>8 enc · 37.5%</b> → Hoy: <b>${total} enc · ${nps!==null?nps.toFixed(1)+'%':'--%'}</b>`;
+  document.getElementById('ayerVsHoy').innerHTML=`Ayer a esta hora: <b>8 enc · 37.5%</b> → Hoy: <b>${tot} enc · ${nps!==null?nps.toFixed(1)+'%':'--%'}</b>`;
 
   // Thermo
-  updateThermo(total, nps);
-
-  // Top rep
-  updateTopRep(f);
-  // Top equipo
-  updateTopEquipo(f);
-
+  updThermo(tot,nps);
+  // Top
+  updTopRep(f);
+  updTopEq(f);
   // Table
-  renderTable(f);
+  rendTable(f);
   // Chart
-  updateChart();
-  // Rachas filtered
-  renderRachas(f);
+  updChart();
+  // Rachas
+  rendRachas();
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 // THERMO
-// ═══════════════════════════════════════════
-function updateThermo(total, nps){
-  const el=document.getElementById('rtThermoText');
-  const wrap=document.getElementById('rtThermo');
-  if(total===0){
-    wrap.innerHTML='🧊 Termómetro del equipo: <span style="margin-left:4px;">Sin actividad aún — ¿Quién será el primer promotor del día? 🚀</span>';
-    return;
-  }
-  let icon,text;
-  if(nps>=60){ icon='🔥🔥🔥'; text='¡EQUIPO EN LLAMAS! Rendimiento excepcional'; }
-  else if(nps>=36.6){ icon='🔥🔥'; text='¡Sobre la meta! El equipo está encendido'; }
-  else if(nps>=20){ icon='🔥'; text='Buen ritmo, cerquita de la meta'; }
-  else if(nps>=0){ icon='🌡️'; text='Tibio, hay que empujar un poco más'; }
-  else if(nps>=-30){ icon='🥶'; text='Frío — necesitamos más promotores'; }
-  else { icon='❄️'; text='Muy frío — momento de reagrupar y enfocarnos'; }
-  wrap.innerHTML=`${icon} Termómetro del equipo: <span style="margin-left:4px;"><b>${text}</b></span>`;
+// ═══════════════════════════════════════
+function updThermo(tot,nps){
+  const el=document.getElementById('thermo');
+  if(!tot){el.innerHTML='🧊 Termómetro del equipo: <b>Sin actividad — ¿Quién será el primer promotor del día? 🚀</b>';return;}
+  let i,t;
+  if(nps>=60){i='🔥🔥🔥';t='¡EQUIPO EN LLAMAS! Rendimiento excepcional';}
+  else if(nps>=36.6){i='🔥🔥';t='¡Sobre la meta! Equipo encendido';}
+  else if(nps>=20){i='🔥';t='Buen ritmo, cerquita de la meta';}
+  else if(nps>=0){i='🌡️';t='Tibio, hay que empujar un poco más';}
+  else if(nps>=-30){i='🥶';t='Frío — necesitamos más promotores';}
+  else{i='❄️';t='Muy frío — momento de reagrupar';}
+  el.innerHTML=`${i} Termómetro del equipo: <b>${t}</b>`;
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 // TOP REP / EQUIPO
-// ═══════════════════════════════════════════
-function updateTopRep(f){
-  const byRep={};
-  f.forEach(e=>{
-    if(!byRep[e.repId]) byRep[e.repId]={p:0,n:0,d:0,total:0,name:e.repName};
-    byRep[e.repId][e.type.toLowerCase()]++;
-    byRep[e.repId].total++;
-  });
-  let best=null, bestNps=-999;
-  Object.entries(byRep).forEach(([id,v])=>{
-    const nps=(v.p-v.d)/v.total*100;
-    if(nps>bestNps||(nps===bestNps&&v.total>(best?best.total:0))){bestNps=nps;best={...v,id};}
-  });
-  const el=document.getElementById('rtTopRepHoy');
-  if(!best){el.innerHTML='<span style="color:var(--t3);font-size:11px;">Esperando encuestas...</span>';return;}
-  const c=bestNps>=36.6?'var(--green)':bestNps>=0?'var(--yellow)':'var(--red)';
-  el.innerHTML=`<span class="top-card-name">${best.name}</span><span class="top-card-enc">${best.total} enc</span><span class="top-card-nps" style="color:${c}">${bestNps.toFixed(0)}%</span>`;
+// ═══════════════════════════════════════
+function updTopRep(f){
+  const by={};
+  f.forEach(e=>{if(!by[e.rid])by[e.rid]={p:0,n:0,d:0,t:0,nm:e.rn};by[e.rid][e.t.toLowerCase()]++;by[e.rid].t++;});
+  let best=null,bn=-999;
+  Object.values(by).forEach(v=>{const np=(v.p-v.d)/v.t*100;if(np>bn||(np===bn&&v.t>(best?best.t:0))){bn=np;best=v;}});
+  const el=document.getElementById('topRepHoy');
+  if(!best){el.innerHTML='<div class="tcard-r"><span style="color:var(--t3);font-size:10px">Esperando encuestas...</span></div>';return;}
+  const c=bn>=36.6?'var(--green)':bn>=0?'var(--yellow)':'var(--red)';
+  el.innerHTML=`<div class="tcard-r"><span>REPRESENTANTE</span><span>ENCUESTAS 📊</span><span>NPS 📈</span></div><div class="tcard-r" style="margin-top:4px"><span class="tcard-n">${best.nm}</span><span class="tcard-e">${best.t}</span><span class="tcard-nps" style="color:${c}">${bn.toFixed(0)} %</span></div>`;
+}
+function updTopEq(f){
+  const by={};
+  f.forEach(e=>{const k=e.lid;if(!by[k])by[k]={p:0,n:0,d:0,t:0,nm:LID.find(l=>l.id===k)?.n||k};by[k][e.t.toLowerCase()]++;by[k].t++;});
+  let best=null,bn=-999;
+  Object.values(by).forEach(v=>{const np=(v.p-v.d)/v.t*100;if(np>bn||(np===bn&&v.t>(best?best.t:0))){bn=np;best=v;}});
+  const el=document.getElementById('topEqHoy');
+  if(!best){el.innerHTML='<div class="tcard-r"><span style="color:var(--t3);font-size:10px">Esperando encuestas...</span></div>';return;}
+  const c=bn>=36.6?'var(--green)':bn>=0?'var(--yellow)':'var(--red)';
+  el.innerHTML=`<div class="tcard-r"><span>LÍDER</span><span>ENCUESTAS 📊</span><span>NPS 📈</span></div><div class="tcard-r" style="margin-top:4px"><span class="tcard-n">${best.nm}</span><span class="tcard-e">${best.t}</span><span class="tcard-nps" style="color:${c}">${bn.toFixed(0)} %</span></div>`;
 }
 
-function updateTopEquipo(f){
-  const byLider={};
-  f.forEach(e=>{
-    const lid=e.lider;
-    if(!byLider[lid]) byLider[lid]={p:0,n:0,d:0,total:0,name:LIDERES.find(l=>l.id===lid)?.name||lid};
-    byLider[lid][e.type.toLowerCase()]++;
-    byLider[lid].total++;
-  });
-  let best=null,bestNps=-999;
-  Object.entries(byLider).forEach(([id,v])=>{
-    const nps=(v.p-v.d)/v.total*100;
-    if(nps>bestNps||(nps===bestNps&&v.total>(best?best.total:0))){bestNps=nps;best={...v,id};}
-  });
-  const el=document.getElementById('rtTopEqHoy');
-  if(!best){el.innerHTML='<span style="color:var(--t3);font-size:11px;">Esperando encuestas...</span>';return;}
-  const c=bestNps>=36.6?'var(--green)':bestNps>=0?'var(--yellow)':'var(--red)';
-  el.innerHTML=`<span class="top-card-name">${best.name}</span><span class="top-card-enc">${best.total} enc</span><span class="top-card-nps" style="color:${c}">${bestNps.toFixed(0)}%</span>`;
-}
-
-// ═══════════════════════════════════════════
-// CHART (Horas)
-// ═══════════════════════════════════════════
-let chartInstance=null;
+// ═══════════════════════════════════════
+// CHART
+// ═══════════════════════════════════════
+let chart=null;
 function initChart(){
-  const ctx=document.getElementById('chartHoras').getContext('2d');
-  chartInstance=new Chart(ctx,{
+  const ctx=document.getElementById('chartH').getContext('2d');
+  chart=new Chart(ctx,{
     type:'bar',
     data:{
       labels:['8h','9h','10h','11h','12h','13h','14h','15h','16h','17h','18h'],
       datasets:[
-        { type:'bar', label:'Encuestas', data:Array(11).fill(0), backgroundColor:'rgba(83,109,254,0.3)', borderColor:'var(--indigo)', borderWidth:1, borderRadius:4, yAxisID:'y1', order:2 },
-        { type:'line', label:'NPS %', data:Array(11).fill(null), borderColor:'var(--green)', backgroundColor:'rgba(0,230,118,0.1)', borderWidth:2, pointRadius:3, pointBackgroundColor:'var(--green)', fill:true, tension:0.3, yAxisID:'y', order:1, spanGaps:true }
+        {type:'bar',label:'Encuestas',data:Array(11).fill(0),backgroundColor:'rgba(83,109,254,0.25)',borderColor:'rgba(83,109,254,0.6)',borderWidth:1,borderRadius:3,yAxisID:'y1',order:2},
+        {type:'line',label:'NPS',data:Array(11).fill(null),borderColor:'var(--green)',backgroundColor:'rgba(0,230,118,0.08)',borderWidth:2,pointRadius:3,pointBackgroundColor:'var(--green)',fill:true,tension:0.3,yAxisID:'y',order:1,spanGaps:true}
       ]
     },
     options:{
-      responsive:true, maintainAspectRatio:false,
+      responsive:true,maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
-      plugins:{
-        legend:{display:true,position:'top',labels:{color:'#8a94a6',font:{size:10,family:'Inter'},boxWidth:12,padding:8}},
-        annotation:{annotations:{metaLine:{type:'line',yMin:36.6,yMax:36.6,borderColor:'rgba(255,214,0,0.5)',borderWidth:1,borderDash:[4,4],yScaleID:'y'}}}
-      },
+      plugins:{legend:{display:true,position:'top',labels:{color:'#8b949e',font:{size:9,family:'Inter'},boxWidth:10,padding:6}}},
       scales:{
-        x:{ticks:{color:'#505a6b',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'}},
-        y:{position:'left',min:-100,max:100,ticks:{color:'#505a6b',font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'}},
-        y1:{position:'right',min:0,ticks:{color:'#505a6b',font:{size:10}},grid:{display:false}}
+        x:{ticks:{color:'#484f58',font:{size:9}},grid:{color:'rgba(255,255,255,0.02)'}},
+        y:{position:'left',min:-100,max:100,ticks:{color:'#484f58',font:{size:9},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.03)'}},
+        y1:{position:'right',min:0,ticks:{color:'#484f58',font:{size:9}},grid:{display:false}}
       }
     }
   });
 }
-
-function updateChart(){
-  if(!chartInstance) return;
-  const f=getFiltered();
-  const hours={};
-  f.forEach(e=>{
-    const h=e.hour;
-    if(!hours[h]) hours[h]={p:0,n:0,d:0,total:0};
-    hours[h][e.type.toLowerCase()]++;
-    hours[h].total++;
-  });
-  const labels=['8h','9h','10h','11h','12h','13h','14h','15h','16h','17h','18h'];
-  const encData=[], npsData=[];
+function updChart(){
+  if(!chart)return;
+  const f=gf();
+  const hrs={};
+  f.forEach(e=>{const h=e.hr;if(!hrs[h])hrs[h]={p:0,n:0,d:0,t:0};hrs[h][e.t.toLowerCase()]++;hrs[h].t++;});
+  const eD=[],nD=[];
   for(let h=8;h<=18;h++){
-    const k=h;
-    if(hours[k]&&hours[k].total>0){
-      encData.push(hours[k].total);
-      npsData.push(((hours[k].p-hours[k].d)/hours[k].total*100));
-    } else {
-      encData.push(0);
-      npsData.push(null);
-    }
+    if(hrs[h]&&hrs[h].t>0){eD.push(hrs[h].t);nD.push((hrs[h].p-hrs[h].d)/hrs[h].t*100);}
+    else{eD.push(0);nD.push(null);}
   }
-  chartInstance.data.datasets[0].data=encData;
-  chartInstance.data.datasets[1].data=npsData;
-  chartInstance.update('none');
+  chart.data.datasets[0].data=eD;
+  chart.data.datasets[1].data=nD;
+  chart.update('none');
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 // RACHAS
-// ═══════════════════════════════════════════
-function renderRachas(filtered){
-  const target=document.getElementById('rtRachas');
-  const simTarget=document.getElementById('simRachas');
+// ═══════════════════════════════════════
+function rendRachas(){
+  const box=document.getElementById('rachasBox');
+  let reps=[...REPS];
+  if(S.fLid!=='all')reps=reps.filter(r=>r.l===S.fLid);
+  if(S.fRep!=='all')reps=reps.filter(r=>r.id===S.fRep);
+  const active=reps.filter(r=>(S.rachas[r.id]||[]).length>0).sort((a,b)=>(S.rachas[b.id]||[]).length-(S.rachas[a.id]||[]).length);
 
-  // Determine which reps to show based on filters
-  let repsToShow=[...REPS];
-  if(S.filterLider!=='all') repsToShow=repsToShow.filter(r=>r.lider===S.filterLider);
-  if(S.filterRep!=='all') repsToShow=repsToShow.filter(r=>r.id===S.filterRep);
+  document.getElementById('rachaCount').textContent=active.length;
 
-  const sorted=repsToShow.filter(r=>(S.rachas[r.id]||[]).length>0).sort((a,b)=>(S.rachas[b.id]||[]).length-(S.rachas[a.id]||[]).length);
-
-  if(sorted.length===0){
-    const empty=`<div class="empty-state"><div class="empty-emoji">🚀</div><div class="empty-title">¿Qué esperas?</div><div class="empty-sub">Sé el primer promotor del día.<br>Cada encuesta cuenta, ¡arrancamos!</div></div>`;
-    target.innerHTML=empty;
-    simTarget.innerHTML=empty.replace('¿Qué esperas?','Simulador listo').replace('Sé el primer promotor','Oprime los botones para');
+  if(!active.length){
+    box.innerHTML='<div class="empty"><div class="empty-e">🚀</div><div class="empty-t">¿Qué esperas?</div><div class="empty-s">Sé el primer promotor del día</div></div>';
     return;
   }
 
-  const html=sorted.map(rep=>{
+  let html='';
+  active.forEach(rep=>{
     const dots=S.rachas[rep.id]||[];
-    // Apply type filter to dots display
-    const filteredDots=S.filterType==='all'?dots:dots; // show all dots but highlight filtered
-    const streak=calcStreak(dots);
-    const si=streakInfo(streak);
-    const pC=dots.filter(d=>d==='P').length, nC=dots.filter(d=>d==='N').length, dC=dots.filter(d=>d==='D').length;
-    return `
-      <div class="rrow">
-        <div class="ravatar" style="background:${rep.color}18;color:${rep.color};border:1px solid ${rep.color}28">${rep.avatar}</div>
-        <div class="rinfo">
-          <div class="rname">${rep.name} <span style="font-size:9px;color:var(--t3);font-weight:400;">${LIDERES.find(l=>l.id===rep.lider)?.name||''}</span></div>
-          <div class="rstats">${dots.length} enc · ${pC}P ${nC}N ${dC}D</div>
-          <div class="rdots">${dots.map((d,i)=>{
-            const dim=S.filterType!=='all'&&d!==S.filterType?'opacity:0.25;':'';
-            return `<div class="rdot ${d}" style="animation-delay:${i*0.04}s;${dim}">${d}</div>`;
-          }).join('')}</div>
+    const sk=calcSk(dots);
+    const si=skInfo(sk);
+    const pC=dots.filter(x=>x==='P').length,nC=dots.filter(x=>x==='N').length,dC=dots.filter(x=>x==='D').length;
+    const sel=S.selRep===rep.id;
+
+    html+=`<div class="rrow ${sel?'selected':''}" onclick="toggleRepDetail('${rep.id}')">
+      <div class="rav" style="background:${rep.c}18;color:${rep.c};border:1px solid ${rep.c}28">${rep.av}</div>
+      <div class="rinf">
+        <div class="rnm">${rep.n} <span style="font-size:9px;color:var(--t3);font-weight:400">${LID.find(l=>l.id===rep.l)?.n||''}</span></div>
+        <div class="rst">${dots.length} enc · ${pC}P ${nC}N ${dC}D</div>
+        <div class="rdots">${dots.map((dd,i)=>{
+          const dim=S.fType!=='all'&&dd!==S.fType?'opacity:0.2;':'';
+          return `<div class="rd ${dd}" style="animation-delay:${i*0.03}s;${dim}">${dd}</div>`;
+        }).join('')}</div>
+      </div>
+      <div class="rstrk" style="background:${si.bg};color:${si.c}">${si.i} ${sk.count}</div>
+    </div>`;
+
+    // Detail panel if selected
+    if(sel){
+      const repEncs=S.enc.filter(e=>e.rid===rep.id);
+      if(S.fType!=='all') repEncs.filter(e=>e.t===S.fType);
+      const filtered=S.fType==='all'?repEncs:repEncs.filter(e=>e.t===S.fType);
+      const rP=repEncs.filter(e=>e.t==='P').length,rN=repEncs.filter(e=>e.t==='N').length,rD=repEncs.filter(e=>e.t==='D').length;
+      const rNps=repEncs.length>0?((rP-rD)/repEncs.length*100):0;
+      const rC=rNps>=36.6?'var(--green)':rNps>=0?'var(--yellow)':'var(--red)';
+
+      html+=`<div class="rep-detail">
+        <div class="rep-detail-h">
+          <div class="rav" style="background:${rep.c}18;color:${rep.c};border:1px solid ${rep.c}28">${rep.av}</div>
+          <div>
+            <div class="rep-detail-name">${rep.n}</div>
+            <div class="rep-detail-stats">
+              <span>NPS: <b style="color:${rC}">${rNps.toFixed(1)}%</b></span>
+              <span>Enc: <b>${repEncs.length}</b></span>
+              <span style="color:var(--green)">P: <b>${rP}</b></span>
+              <span style="color:var(--yellow)">N: <b>${rN}</b></span>
+              <span style="color:var(--red)">D: <b>${rD}</b></span>
+            </div>
+          </div>
         </div>
-        <div class="rstreak" style="background:${si.bg};color:${si.c}">${si.i} ${streak.count}</div>
+        <div class="rep-enc-list">
+          ${filtered.length?filtered.reverse().map(e=>{
+            const nc=e.t==='P'?'var(--green)':e.t==='N'?'var(--yellow)':'var(--red)';
+            const nv=e.t==='P'?'100%':e.t==='N'?'0%':'-100%';
+            return `<div class="rep-enc-item">
+              <span class="rep-enc-time">${e.ts}</span>
+              <span style="color:var(--t3);min-width:70px">Caso ${e.cid}</span>
+              <span class="rep-enc-proc">${e.proc}</span>
+              <span class="rep-enc-nps" style="color:${nc}">${nv}</span>
+            </div>`;
+          }).join(''):'<div style="text-align:center;padding:12px;color:var(--t3);font-size:10px">Sin encuestas con este filtro</div>'}
+        </div>
       </div>`;
-  }).join('');
+    }
+  });
 
-  target.innerHTML=html;
-  simTarget.innerHTML=html;
+  box.innerHTML=html;
 }
-function calcStreak(d){if(!d.length)return{type:null,count:0};let l=d[d.length-1],c=0;for(let i=d.length-1;i>=0;i--){if(d[i]===l)c++;else break;}return{type:l,count:c};}
-function streakInfo(s){if(!s.type)return{i:'',bg:'transparent',c:'var(--t3)'};return{P:{i:'🔥',bg:'var(--greenBg)',c:'var(--green)'},N:{i:'😐',bg:'var(--yellowBg)',c:'var(--yellow)'},D:{i:'⚠️',bg:'var(--redBg)',c:'var(--red)'}}[s.type];}
 
-// ═══════════════════════════════════════════
+function toggleRepDetail(id){
+  S.selRep=S.selRep===id?null:id;
+  rendRachas();
+}
+
+function calcSk(d){if(!d.length)return{type:null,count:0};let l=d[d.length-1],c=0;for(let i=d.length-1;i>=0;i--){if(d[i]===l)c++;else break;}return{type:l,count:c};}
+function skInfo(s){if(!s.type)return{i:'',bg:'transparent',c:'var(--t3)'};return{P:{i:'🔥',bg:'var(--greenBg)',c:'var(--green)'},N:{i:'😐',bg:'var(--yellowBg)',c:'var(--yellow)'},D:{i:'⚠️',bg:'var(--redBg)',c:'var(--red)'}}[s.type];}
+
+// ═══════════════════════════════════════
 // TABLE
-// ═══════════════════════════════════════════
-function renderTable(f){
-  const tbody=document.getElementById('rtTableBody');
-  if(!f||f.length===0){
-    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--t3)">Sin encuestas aún</td></tr>';
-    return;
-  }
-  const sorted=[...f].reverse(); // newest first
-  tbody.innerHTML=sorted.map(e=>{
-    const pillClass=e.type==='P'?'p':e.type==='N'?'n':'d';
-    const npsVal=e.type==='P'?'100%':e.type==='N'?'0%':'-100%';
+// ═══════════════════════════════════════
+function rendTable(f){
+  const tb=document.getElementById('tblBody');
+  if(!f||!f.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--t3)">Sin encuestas aún</td></tr>';return;}
+  tb.innerHTML=[...f].reverse().map(e=>{
+    const pc=e.t==='P'?'p':e.t==='N'?'n':'d';
+    const nv=e.t==='P'?'100%':e.t==='N'?'0%':'-100%';
     return `<tr>
-      <td>${e.timeStr}</td>
-      <td>${e.caseId}</td>
-      <td>${LIDERES.find(l=>l.id===e.lider)?.name||e.lider}</td>
-      <td><b>${e.repName}</b></td>
-      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.sol}</td>
-      <td style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic;">"${e.comment}"</td>
-      <td><span class="nps-pill ${pillClass}">${npsVal}</span></td>
+      <td>feb 11, ${e.ts}a.m.</td>
+      <td>${e.cid}</td>
+      <td>${LID.find(l=>l.id===e.lid)?.n||e.lid}</td>
+      <td><b>${e.rn}</b></td>
+      <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.sol}</td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic">${e.com}</td>
+      <td><span class="npill ${pc}">${nv}</span></td>
     </tr>`;
   }).join('');
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 // FEED
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 function addFeed(html){
-  const rtF=document.getElementById('rtFeed');
-  const simF=document.getElementById('simFeed');
-  if(!S.feedStarted){rtF.innerHTML='';simF.innerHTML='';S.feedStarted=true;}
-  rtF.insertAdjacentHTML('afterbegin',html);
-  simF.insertAdjacentHTML('afterbegin',html);
-  while(rtF.children.length>25)rtF.removeChild(rtF.lastChild);
-  while(simF.children.length>25)simF.removeChild(simF.lastChild);
+  const fb=document.getElementById('feedBox');
+  if(!S.feedOn){fb.innerHTML='';S.feedOn=true;}
+  fb.insertAdjacentHTML('afterbegin',html);
+  while(fb.children.length>25)fb.removeChild(fb.lastChild);
 }
 
-function nextCase(){S.caseN+=Math.floor(Math.random()*40)+1;return S.caseN;}
-function advanceTime(){
-  S.minN+=Math.floor(Math.random()*12)+1;
-  if(S.minN>=60){S.minN-=60;S.hourN=Math.min(18,S.hourN+1);}
-  return `${S.hourN}:${String(S.minN).padStart(2,'0')}`;
+// ═══════════════════════════════════════
+// TOAST (non-intrusive achievement)
+// ═══════════════════════════════════════
+function showToast(emoji,title,desc){
+  const c=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className='toast';
+  t.innerHTML=`<div class="toast-emoji">${emoji}</div><div class="toast-body"><div class="toast-title">🏆 ¡${title}!</div><div class="toast-desc">${desc}</div><div class="toast-bar"><div class="toast-bar-fill"></div></div></div>`;
+  c.appendChild(t);
+  miniConfetti();
+  // Feed card too
+  addFeed(`<div class="fc" style="background:linear-gradient(135deg,rgba(179,136,255,0.08),rgba(0,229,255,0.04));border-color:rgba(179,136,255,0.15);"><div class="fch"><span class="fci">${emoji}</span><span class="fct" style="color:var(--purple)">¡Logro!</span></div><div class="fcb"><b>${title}</b> — ${desc}</div></div>`);
+  setTimeout(()=>t.remove(),7500);
 }
-function flash(c){const el=document.getElementById(c==='r'?'flR':'flG');el.classList.add('show');setTimeout(()=>el.classList.remove('show'),200);}
-function launchConfetti(){const cols=['#00e676','#536dfe','#b388ff','#00e5ff','#ffd600','#ff9100','#ea80fc'];for(let i=0;i<50;i++){const c=document.createElement('div');c.className='confetti';c.style.cssText=`left:${Math.random()*100}%;background:${cols[i%7]};width:${Math.random()*7+4}px;height:${Math.random()*7+4}px;border-radius:${Math.random()>0.5?'50%':'2px'};animation-duration:${Math.random()*1.8+1.2}s;animation-delay:${Math.random()*0.4}s;`;document.body.appendChild(c);setTimeout(()=>c.remove(),3500);}}
 
-// ═══════════════════════════════════════════
+function miniConfetti(){
+  const cols=['#b388ff','#00e5ff','#00e676','#ffc107','#536dfe'];
+  for(let i=0;i<25;i++){
+    const c=document.createElement('div');c.className='confetti';
+    c.style.cssText=`left:${70+Math.random()*30}%;top:0;background:${cols[i%5]};width:${Math.random()*6+3}px;height:${Math.random()*6+3}px;border-radius:${Math.random()>0.5?'50%':'1px'};animation-duration:${Math.random()*1.5+1}s;animation-delay:${Math.random()*0.3}s;`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),3000);
+  }
+}
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+function nxtC(){S.cN+=Math.floor(Math.random()*35)+5;return S.cN;}
+function advT(){S.mN+=Math.floor(Math.random()*10)+2;if(S.mN>=60){S.mN-=60;S.hN=Math.min(18,S.hN+1);}return `${S.hN}:${String(S.mN).padStart(2,'0')}`;}
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+function flash(c){const el=document.getElementById(c==='r'?'flR':'flG');el.classList.add('show');setTimeout(()=>el.classList.remove('show'),180);}
+
+// ═══════════════════════════════════════
 // SIMULATORS
-// ═══════════════════════════════════════════
-function simPromotor(){
-  const rep=REPS[Math.floor(Math.random()*REPS.length)];
-  const pI=Math.floor(Math.random()*PROCESOS.length);
-  const com=COM_P[Math.floor(Math.random()*COM_P.length)];
-  const cid=nextCase(), time=advanceTime();
-
-  const enc={type:'P',repId:rep.id,repName:rep.name,lider:rep.lider,proc:PROCESOS[pI],sol:SOLUCIONES[pI],comment:com,caseId:cid,timeStr:time,hour:S.hourN};
-  S.encuestas.push(enc);
-  S.p++;
-  S.rachas[rep.id].push('P');
-  if(!S.horaData[S.hourN])S.horaData[S.hourN]={p:0,n:0,d:0};
-  S.horaData[S.hourN].p++;
-
+// ═══════════════════════════════════════
+function simP(){
+  const rep=rnd(REPS),pi=Math.floor(Math.random()*PROC.length),com=rnd(CP);
+  const cid=nxtC(),ts=advT();
+  const e={t:'P',rid:rep.id,rn:rep.n,lid:rep.l,proc:PROC[pi],sol:SOL[pi],com:com,cid:cid,ts:ts,hr:S.hN};
+  S.enc.push(e);S.p++;S.rachas[rep.id].push('P');
   flash('g');
 
-  const streak=calcStreak(S.rachas[rep.id]);
-  const prevDot=S.rachas[rep.id].length>=2?S.rachas[rep.id][S.rachas[rep.id].length-2]:null;
+  const sk=calcSk(S.rachas[rep.id]);
+  const prev=S.rachas[rep.id].length>=2?S.rachas[rep.id][S.rachas[rep.id].length-2]:null;
 
-  addFeed(`<div class="acard pro"><div class="ah"><span class="ai">🟢</span><span class="at" style="color:var(--green)">Promotor</span><span class="atm">${time} · Caso ${cid}</span></div><div class="ab"><strong>${rep.name}</strong> · ${PROCESOS[pI]}<br><em>"${com}"</em></div></div>`);
+  addFeed(`<div class="fc pro"><div class="fch"><span class="fci">🟢</span><span class="fct" style="color:var(--green)">Promotor</span><span class="fctime">${ts} · ${cid}</span></div><div class="fcb"><b>${rep.n}</b> · ${PROC[pi]}<br><em>"${com}"</em></div></div>`);
+  apply();
 
-  applyFilters();
-
-  if(streak.type==='P'&&streak.count===5) setTimeout(()=>showAch('💎','RACHA PERFECTA',`${rep.name} — 5 promotores seguidos`),500);
-  else if(streak.type==='P'&&prevDot==='D') setTimeout(()=>showAch('🛡️','RECUPERACIÓN ÉPICA',`${rep.name} — Promotor después de detractor`),500);
-  else if(S.p===1&&S.n===0&&S.d===0) setTimeout(()=>showAch('🚀','PRIMER PROMOTOR',`${rep.name} — ¡Arrancó el día con todo!`),500);
+  if(sk.type==='P'&&sk.count===5)setTimeout(()=>showToast('💎','RACHA PERFECTA',`${rep.n} — 5 promotores seguidos`),400);
+  else if(sk.type==='P'&&prev==='D')setTimeout(()=>showToast('🛡️','RECUPERACIÓN ÉPICA',`${rep.n} — Promotor después de detractor`),400);
+  else if(S.p===1&&S.n===0&&S.d===0)setTimeout(()=>showToast('🚀','PRIMER PROMOTOR',`${rep.n} — ¡Arrancó el día con todo!`),400);
 }
 
-function simDetractor(){
-  const rep=REPS[Math.floor(Math.random()*REPS.length)];
-  const pI=Math.floor(Math.random()*PROCESOS.length);
-  const com=COM_D[Math.floor(Math.random()*COM_D.length)];
-  const cid=nextCase(), time=advanceTime();
-
-  const enc={type:'D',repId:rep.id,repName:rep.name,lider:rep.lider,proc:PROCESOS[pI],sol:SOLUCIONES[pI],comment:com,caseId:cid,timeStr:time,hour:S.hourN};
-  S.encuestas.push(enc);
-  S.d++;
-  S.rachas[rep.id].push('D');
-  if(!S.horaData[S.hourN])S.horaData[S.hourN]={p:0,n:0,d:0};
-  S.horaData[S.hourN].d++;
-
+function simD(){
+  const rep=rnd(REPS),pi=Math.floor(Math.random()*PROC.length),com=rnd(CD);
+  const cid=nxtC(),ts=advT();
+  const e={t:'D',rid:rep.id,rn:rep.n,lid:rep.l,proc:PROC[pi],sol:SOL[pi],com:com,cid:cid,ts:ts,hr:S.hN};
+  S.enc.push(e);S.d++;S.rachas[rep.id].push('D');
   flash('r');
 
-  const repDetCount=S.encuestas.filter(e=>e.repId===rep.id&&e.type==='D').length;
-  const referente=REPS.filter(r=>r.id!==rep.id)[Math.floor(Math.random()*(REPS.length-1))];
-  const esp1=REPS.filter(r=>r.id!==rep.id)[Math.floor(Math.random()*(REPS.length-1))];
-  const esp2=REPS.filter(r=>r.id!==rep.id&&r.id!==esp1.id)[Math.floor(Math.random()*(REPS.length-2))];
+  const detC=S.enc.filter(x=>x.rid===rep.id&&x.t==='D').length;
+  const ref=REPS.filter(r=>r.id!==rep.id);
+  const e1=rnd(ref),e2=rnd(ref.filter(r=>r.id!==e1.id));
 
-  addFeed(`<div class="acard det"><div class="ah"><span class="ai">🚨</span><span class="at" style="color:var(--red)">Detractor Detectado</span><span class="atm">${time} · Caso ${cid}</span></div><div class="ab"><strong>${rep.name}</strong> · ${PROCESOS[pI]}<br>Sol: ${SOLUCIONES[pI]}<br><em>"${com}"</em></div><div class="espejo"><div class="espejo-t">💡 Casos espejo — Promotor en menor tiempo</div><div class="espejo-i">✅ Caso ${cid-Math.floor(Math.random()*4000)-1000} · <b>${esp1.name}</b> · ${(Math.random()*7+12).toFixed(1)} min → 100%</div><div class="espejo-i">✅ Caso ${cid-Math.floor(Math.random()*6000)-2000} · <b>${esp2.name}</b> · ${(Math.random()*9+13).toFixed(1)} min → 100%</div></div><div class="pbox"><div class="pbox-t">⚠️ Contexto histórico</div><div style="font-size:10px;color:var(--t2);line-height:1.5"><b>${rep.name}</b> lleva <b>${repDetCount} detractor${repDetCount>1?'es':''}</b> en <em>${PROCESOS[pI].split(' - ')[0]}</em> este mes.<br>Referente del equipo: <b>${referente.name}</b></div></div></div>`);
-
-  applyFilters();
+  addFeed(`<div class="fc det"><div class="fch"><span class="fci">🚨</span><span class="fct" style="color:var(--red)">Detractor</span><span class="fctime">${ts} · ${cid}</span></div><div class="fcb"><b>${rep.n}</b> · ${PROC[pi]}<br>Sol: ${SOL[pi]}<br><em>"${com}"</em></div><div class="espejo"><div class="espejo-t">💡 Casos espejo — Promotor en menor tiempo</div><div class="espejo-i">✅ ${cid-Math.floor(Math.random()*3000)-800} · <b>${e1.n}</b> · ${(Math.random()*6+12).toFixed(1)} min → 100%</div><div class="espejo-i">✅ ${cid-Math.floor(Math.random()*5000)-1500} · <b>${e2.n}</b> · ${(Math.random()*8+13).toFixed(1)} min → 100%</div></div><div class="pbox"><div class="pbox-t">⚠️ Contexto histórico</div><div style="font-size:9px;color:var(--t2);line-height:1.4"><b>${rep.n}</b> lleva <b>${detC}</b> detractor${detC>1?'es':''} en <em>${PROC[pi].split(' - ')[0]}</em> este mes. Referente: <b>${rnd(ref).n}</b></div></div></div>`);
+  apply();
 }
 
-function simNeutro(){
-  const rep=REPS[Math.floor(Math.random()*REPS.length)];
-  const pI=Math.floor(Math.random()*PROCESOS.length);
-  const com=COM_N[Math.floor(Math.random()*COM_N.length)];
-  const cid=nextCase(), time=advanceTime();
+function simN(){
+  const rep=rnd(REPS),pi=Math.floor(Math.random()*PROC.length),com=rnd(CN);
+  const cid=nxtC(),ts=advT();
+  const e={t:'N',rid:rep.id,rn:rep.n,lid:rep.l,proc:PROC[pi],sol:SOL[pi],com:com,cid:cid,ts:ts,hr:S.hN};
+  S.enc.push(e);S.n++;S.rachas[rep.id].push('N');
 
-  const enc={type:'N',repId:rep.id,repName:rep.name,lider:rep.lider,proc:PROCESOS[pI],sol:SOLUCIONES[pI],comment:com,caseId:cid,timeStr:time,hour:S.hourN};
-  S.encuestas.push(enc);
-  S.n++;
-  S.rachas[rep.id].push('N');
-  if(!S.horaData[S.hourN])S.horaData[S.hourN]={p:0,n:0,d:0};
-  S.horaData[S.hourN].n++;
-
-  addFeed(`<div class="acard neu"><div class="ah"><span class="ai">🟡</span><span class="at" style="color:var(--yellow)">Neutro</span><span class="atm">${time} · Caso ${cid}</span></div><div class="ab"><strong>${rep.name}</strong> · ${PROCESOS[pI]}<br><em>"${com}"</em></div></div>`);
-
-  applyFilters();
+  addFeed(`<div class="fc neu"><div class="fch"><span class="fci">🟡</span><span class="fct" style="color:var(--yellow)">Neutro</span><span class="fctime">${ts} · ${cid}</span></div><div class="fcb"><b>${rep.n}</b> · ${PROC[pi]}<br><em>"${com}"</em></div></div>`);
+  apply();
 }
 
 function simPatron(){
-  const proc=PROCESOS[Math.floor(Math.random()*PROCESOS.length)].split(' - ')[0];
-  const solB=SOLUCIONES[Math.floor(Math.random()*SOLUCIONES.length)];
-  const solG=SOLUCIONES[Math.floor(Math.random()*SOLUCIONES.length)];
-  const pctD=Math.floor(Math.random()*25)+65;
-  const pctP=Math.floor(Math.random()*20)+60;
-  const avgT=(Math.random()*7+12).toFixed(1);
-  const hora=Math.floor(Math.random()*4)+14;
-
-  addFeed(`<div class="acard pat"><div class="ah"><span class="ai">🧠</span><span class="at" style="color:var(--indigo)">Patrón Detectado</span><span class="atm">Análisis histórico</span></div><div class="ab"><b>${proc}</b> + sol <em>"${solB.substring(0,35)}..."</em><br>→ <b style="color:var(--red)">${pctD}% detractores</b> este mes en el equipo</div><div class="pbox"><div class="pbox-t">💡 Alternativa con mejores resultados</div><div style="font-size:10px;color:var(--t2);line-height:1.5">Con <em>"${solG.substring(0,35)}..."</em><br>→ <b style="color:var(--green)">${pctP}% promotor</b> · Tiempo prom: <b>${avgT} min</b><br>📊 Después de las <b>${hora}:00</b> los detractores suben 23% (fatiga)</div></div></div>`);
+  const pr=rnd(PROC).split(' - ')[0],sb=rnd(SOL),sg=rnd(SOL);
+  const pD=Math.floor(Math.random()*22)+65,pP=Math.floor(Math.random()*18)+60,at=(Math.random()*6+12).toFixed(1),hr=Math.floor(Math.random()*4)+14;
+  addFeed(`<div class="fc pat"><div class="fch"><span class="fci">🧠</span><span class="fct" style="color:var(--indigo)">Patrón</span><span class="fctime">Histórico</span></div><div class="fcb"><b>${pr}</b> + <em>"${sb.substring(0,30)}..."</em><br>→ <b style="color:var(--red)">${pD}% detractores</b> este mes</div><div class="pbox"><div class="pbox-t">💡 Alternativa</div><div style="font-size:9px;color:var(--t2);line-height:1.4">Con <em>"${sg.substring(0,30)}..."</em> → <b style="color:var(--green)">${pP}% promotor</b> · ${at} min<br>Después de las ${hr}:00 detractores +23%</div></div></div>`);
 }
 
 function simLogro(){
-  const l=LOGROS[Math.floor(Math.random()*LOGROS.length)];
-  const rep=REPS[Math.floor(Math.random()*REPS.length)];
-  showAch(l.emoji,l.title,`${rep.name} — ${l.desc}`);
+  const l=rnd(LOGROS),rep=rnd(REPS);
+  showToast(l.e,l.t,`${rep.n} — ${l.d}`);
 }
 
-function showAch(emoji,title,desc){
-  document.getElementById('achE').textContent=emoji;
-  document.getElementById('achT').textContent=title;
-  document.getElementById('achD').textContent=desc;
-  document.getElementById('achOv').classList.add('show');
-  launchConfetti();
-  addFeed(`<div class="acard ach"><div class="ah"><span class="ai">${emoji}</span><span class="at" style="color:var(--purple)">¡Logro Desbloqueado!</span></div><div class="ab"><b>${title}</b><br>${desc}</div></div>`);
-}
-
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 // CIERRE
-// ═══════════════════════════════════════════
-function simCierreAM(){showCierre('am');}
-function simCierrePM(){showCierre('pm');}
-function showCierre(t){
+// ═══════════════════════════════════════
+function simCierre(t){
   const am=t==='am';
   document.getElementById('ciTL').textContent=am?'CIERRE TURNO MAÑANA':'CIERRE TURNO TARDE';
   document.getElementById('ciHR').textContent=am?'📊 12:25 PM':'📊 6:30 PM';
-
-  WEEK[TODAY_IDX]={day:'Mié',enc:S.p+S.n+S.d,p:S.p,n:S.n,d:S.d};
+  WK[TI]={d:'Mié',e:S.p+S.n+S.d,p:S.p,n:S.n,dd:S.d};
   const wk=document.getElementById('ciWK');
-  wk.innerHTML=WEEK.map((d,i)=>{
-    const today=i===TODAY_IDX, future=i>TODAY_IDX;
-    const nps=d.enc>0?((d.p-d.d)/d.enc*100):null;
+  wk.innerHTML=WK.map((w,i)=>{
+    const today=i===TI,future=i>TI;
+    const nps=w.e>0?((w.p-w.dd)/w.e*100):null;
     const c=nps===null?'var(--t3)':nps>=36.6?'var(--green)':nps>=0?'var(--yellow)':'var(--red)';
-    return `<div class="ci-day ${today?'today':''} ${future?'future':''}"><div class="ci-dn">${d.day}</div><div class="ci-de">${future?'--':d.enc||'--'}</div><div class="ci-dp" style="color:${future?'var(--t3)':c}">${future?'--':nps!==null?nps.toFixed(1)+'%':'--'}</div></div>`;
+    return `<div style="text-align:center;padding:10px 4px;border-radius:10px;background:${today?'var(--indigoBg)':'var(--bg3)'};border:1px solid ${today?'rgba(83,109,254,0.2)':'var(--border)'};opacity:${future?0.3:1}"><div style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:3px">${w.d}</div><div style="font-size:18px;font-weight:800">${future?'--':w.e||'--'}</div><div style="font-size:11px;font-weight:600;color:${future?'var(--t3)':c}">${future?'--':nps!==null?nps.toFixed(1)+'%':'--'}</div></div>`;
   }).join('');
 
-  const wt=WEEK.reduce((a,d)=>({p:a.p+d.p,n:a.n+d.n,d:a.d+d.d,e:a.e+d.enc}),{p:0,n:0,d:0,e:0});
-  const wNps=wt.e>0?((wt.p-wt.d)/wt.e*100):null;
-  const snEl=document.getElementById('ciSN');
-  snEl.textContent=wNps!==null?wNps.toFixed(1)+'%':'--%';
-  snEl.style.color=wNps===null?'var(--t3)':wNps>=36.6?'var(--green)':wNps>=0?'var(--yellow)':'var(--red)';
+  const wt=WK.reduce((a,w)=>({p:a.p+w.p,n:a.n+w.n,d:a.d+w.dd,e:a.e+w.e}),{p:0,n:0,d:0,e:0});
+  const wN=wt.e>0?((wt.p-wt.d)/wt.e*100):null;
+  const sn=document.getElementById('ciSN');
+  sn.textContent=wN!==null?wN.toFixed(1)+'%':'--%';
+  sn.style.color=wN===null?'var(--t3)':wN>=36.6?'var(--green)':wN>=0?'var(--yellow)':'var(--red)';
 
   const mg=document.getElementById('ciMG');
   if(am){
-    if(wNps>=36.6) mg.innerHTML='¡Vamos por encima de la meta! 💪 Pueden caer más encuestas en la tarde,<br>¡el equipo de mañana dejó la vara alta! 🔥';
-    else if(wNps>=15) mg.innerHTML='Vamos cerquita de la meta, aún hay camino. 📈<br>¡Esperemos que la tarde nos ayude a cerrar aún mejor! 💪';
-    else mg.innerHTML='Semana retadora, pero cada encuesta cuenta. 🛤️<br>¡Esperemos poder cerrar mejor al final del día!';
+    mg.innerHTML=wN>=36.6?'¡Vamos por encima de la meta! 💪 Pueden caer más encuestas,<br>¡el equipo de mañana dejó la vara alta! 🔥':wN>=15?'Cerquita de la meta, aún hay camino. 📈<br>¡Esperemos que la tarde nos ayude a cerrar mejor! 💪':'Semana retadora, cada encuesta cuenta. 🛤️<br>¡Esperemos cerrar mejor al final del día!';
   } else {
-    if(wNps>=36.6) mg.innerHTML='¡Gran cierre! El equipo lo dio todo. 🏆<br>Mañana seguimos construyendo sobre esta base. ¡A descansar! 🌙';
-    else if(wNps>=15) mg.innerHTML='Así cerramos el panorama de hoy. Aún pueden caer encuestas,<br>pero el equipo dio todo. ¡Mañana seguimos! 🔥';
-    else mg.innerHTML='Día retador, pero cada día es oportunidad nueva. 🌅<br>¡Mañana arrancamos con toda! 💪';
+    mg.innerHTML=wN>=36.6?'¡Gran cierre! El equipo lo dio todo. 🏆<br>Mañana seguimos construyendo. ¡A descansar! 🌙':wN>=15?'Así cerramos hoy. Pueden caer más encuestas,<br>pero el equipo dio todo. ¡Mañana seguimos! 🔥':'Día retador, cada día es oportunidad nueva. 🌅<br>¡Mañana arrancamos con toda! 💪';
   }
-  document.getElementById('ciOv').classList.add('show');
+  document.getElementById('ciOv').style.display='flex';
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
 // AUTO-PLAY
-// ═══════════════════════════════════════════
-let autoTimer=null;
-function simAutoPlay(){
-  if(autoTimer){clearInterval(autoTimer);autoTimer=null;return;}
-  const sequence=['P','P','D','P','N','P','P','P','D','N','P','P','D','P','P','N','P','P','P','D'];
-  let i=0;
+// ═══════════════════════════════════════
+let autoT=null;
+function simAuto(){
+  if(autoT){clearInterval(autoT);autoT=null;return;}
   switchTab('rt');
-  autoTimer=setInterval(()=>{
-    if(i>=sequence.length){
-      clearInterval(autoTimer);autoTimer=null;
-      setTimeout(()=>simPatron(),500);
-      setTimeout(()=>simCierrePM(),2500);
-      return;
-    }
-    const t=sequence[i];
-    if(t==='P')simPromotor();
-    else if(t==='D')simDetractor();
-    else simNeutro();
+  const seq=['P','P','D','P','N','P','P','P','D','N','P','P','D','P','P','N','P','P','P','D'];
+  let i=0;
+  autoT=setInterval(()=>{
+    if(i>=seq.length){clearInterval(autoT);autoT=null;setTimeout(simPatron,400);setTimeout(()=>simCierre('pm'),2200);return;}
+    seq[i]==='P'?simP():seq[i]==='D'?simD():simN();
     i++;
-  },800);
+  },700);
 }
 
-// ═══════════════════════════════════════════
-// AUTO RESET
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════
+// AUTO RESET (midnight)
+// ═══════════════════════════════════════
 function autoReset(){
-  S.p=0;S.n=0;S.d=0;S.feedStarted=false;S.hourN=8;S.minN=5;S.encuestas=[];S.horaData={};
-  S.filterType='all';S.filterLider='all';S.filterRep='all';
+  S.p=0;S.n=0;S.d=0;S.feedOn=false;S.hN=8;S.mN=5;S.enc=[];S.selRep=null;S.fType='all';S.fLid='all';S.fRep='all';
   REPS.forEach(r=>S.rachas[r.id]=[]);
-  WEEK[TODAY_IDX]={day:'Mié',enc:0,p:0,n:0,d:0};
-  document.getElementById('rtFeed').innerHTML='<div class="empty-state" style="padding:30px 10px;"><div class="empty-emoji" style="font-size:40px;">📡</div><div class="empty-title" style="font-size:15px;">Escuchando...</div><div class="empty-sub" style="font-size:12px;">Las alertas aparecerán aquí<br>cuando lleguen encuestas</div></div>';
-  document.getElementById('simFeed').innerHTML='<div class="empty-state" style="padding:30px 10px;"><div class="empty-emoji" style="font-size:40px;">🎮</div><div class="empty-title" style="font-size:15px;">Listo para simular</div><div class="empty-sub" style="font-size:12px;">Las alertas simuladas<br>aparecerán aquí</div></div>';
-  applyFilters();
+  WK[TI]={d:'Mié',e:0,p:0,n:0,dd:0};
+  document.getElementById('feedBox').innerHTML='<div class="empty" style="padding:24px 10px;"><div class="empty-e" style="font-size:32px;">📡</div><div class="empty-t" style="font-size:14px;">Escuchando...</div><div class="empty-s" style="font-size:11px;">Alertas aparecerán aquí</div></div>';
+  document.querySelectorAll('.fpill').forEach(b=>b.classList.remove('on'));
+  document.querySelector('.fpill[data-v="all"]').classList.add('on');
+  document.getElementById('fLider').value='all';
+  populateRepSel('all');
+  apply();
 }
 
-// ═══════════════════════════════════════════
-// PRE-POPULATE REAL TIME TAB
-// ═══════════════════════════════════════════
-function prePopulate(){
+// ═══════════════════════════════════════
+// PRE-POPULATE (Real Time tab with data)
+// ═══════════════════════════════════════
+function prePop(){
   const data=[
     {t:'P',r:0},{t:'P',r:1},{t:'D',r:2},{t:'P',r:3},{t:'N',r:4},
     {t:'P',r:5},{t:'P',r:0},{t:'D',r:6},{t:'P',r:7},{t:'P',r:1},
@@ -1121,45 +963,30 @@ function prePopulate(){
     {t:'P',r:5},{t:'N',r:7},{t:'P',r:0},{t:'D',r:2},{t:'P',r:9}
   ];
   data.forEach(d=>{
-    const rep=REPS[d.r];
-    const pI=Math.floor(Math.random()*PROCESOS.length);
-    const com=d.t==='P'?COM_P[Math.floor(Math.random()*COM_P.length)]:d.t==='D'?COM_D[Math.floor(Math.random()*COM_D.length)]:COM_N[Math.floor(Math.random()*COM_N.length)];
-    const cid=nextCase(), time=advanceTime();
-    const enc={type:d.t,repId:rep.id,repName:rep.name,lider:rep.lider,proc:PROCESOS[pI],sol:SOLUCIONES[pI],comment:com,caseId:cid,timeStr:time,hour:S.hourN};
-    S.encuestas.push(enc);
+    const rep=REPS[d.r],pi=Math.floor(Math.random()*PROC.length);
+    const com=d.t==='P'?rnd(CP):d.t==='D'?rnd(CD):rnd(CN);
+    const cid=nxtC(),ts=advT();
+    S.enc.push({t:d.t,rid:rep.id,rn:rep.n,lid:rep.l,proc:PROC[pi],sol:SOL[pi],com:com,cid:cid,ts:ts,hr:S.hN});
     if(d.t==='P')S.p++;else if(d.t==='D')S.d++;else S.n++;
     S.rachas[rep.id].push(d.t);
-    if(!S.horaData[S.hourN])S.horaData[S.hourN]={p:0,n:0,d:0};
-    S.horaData[S.hourN][d.t.toLowerCase()]++;
   });
 
-  // Build feed for pre-populated
-  S.feedStarted=true;
-  const rtF=document.getElementById('rtFeed');
-  rtF.innerHTML='';
-  [...S.encuestas].reverse().slice(0,10).forEach(e=>{
-    const cls=e.type==='P'?'pro':e.type==='D'?'det':'neu';
-    const icon=e.type==='P'?'🟢':e.type==='D'?'🚨':'🟡';
-    const label=e.type==='P'?'Promotor':e.type==='D'?'Detractor Detectado':'Neutro';
-    const color=e.type==='P'?'var(--green)':e.type==='D'?'var(--red)':'var(--yellow)';
+  // Pre-populate feed
+  S.feedOn=true;
+  const fb=document.getElementById('feedBox');fb.innerHTML='';
+  [...S.enc].reverse().slice(0,12).forEach(e=>{
+    const cls=e.t==='P'?'pro':e.t==='D'?'det':'neu';
+    const icon=e.t==='P'?'🟢':e.t==='D'?'🚨':'🟡';
+    const lab=e.t==='P'?'Promotor':e.t==='D'?'Detractor':'Neutro';
+    const col=e.t==='P'?'var(--green)':e.t==='D'?'var(--red)':'var(--yellow)';
     let extra='';
-    if(e.type==='D'){
-      const esp1=REPS.filter(r=>r.id!==e.repId)[0];
-      const esp2=REPS.filter(r=>r.id!==e.repId)[1];
-      const ref=REPS.filter(r=>r.id!==e.repId)[2];
-      extra=`<div class="espejo"><div class="espejo-t">💡 Casos espejo — Promotor en menor tiempo</div><div class="espejo-i">✅ Caso ${e.caseId-1200} · <b>${esp1.name}</b> · ${(Math.random()*6+13).toFixed(1)} min → 100%</div><div class="espejo-i">✅ Caso ${e.caseId-3400} · <b>${esp2.name}</b> · ${(Math.random()*8+14).toFixed(1)} min → 100%</div></div><div class="pbox"><div class="pbox-t">⚠️ Contexto histórico</div><div style="font-size:10px;color:var(--t2);line-height:1.5"><b>${e.repName}</b> lleva <b>${S.encuestas.filter(x=>x.repId===e.repId&&x.type==='D').length} detractores</b> en <em>${e.proc.split(' - ')[0]}</em> este mes.<br>Referente: <b>${ref.name}</b></div></div>`;
+    if(e.t==='D'){
+      const ref=REPS.filter(r=>r.id!==e.rid);
+      extra=`<div class="espejo"><div class="espejo-t">💡 Casos espejo</div><div class="espejo-i">✅ ${e.cid-1100} · <b>${rnd(ref).n}</b> · ${(Math.random()*5+13).toFixed(1)} min → 100%</div></div><div class="pbox"><div class="pbox-t">⚠️ Contexto</div><div style="font-size:9px;color:var(--t2);line-height:1.4"><b>${e.rn}</b> lleva <b>${S.enc.filter(x=>x.rid===e.rid&&x.t==='D').length}</b> detractores en <em>${e.proc.split(' - ')[0]}</em>. Referente: <b>${rnd(ref).n}</b></div></div>`;
     }
-    rtF.insertAdjacentHTML('beforeend',`<div class="acard ${cls}" style="animation:none;"><div class="ah"><span class="ai">${icon}</span><span class="at" style="color:${color}">${label}</span><span class="atm">${e.timeStr} · Caso ${e.caseId}</span></div><div class="ab"><strong>${e.repName}</strong> · ${e.proc}<br><em>"${e.comment}"</em></div>${extra}</div>`);
+    fb.insertAdjacentHTML('beforeend',`<div class="fc ${cls}" style="animation:none"><div class="fch"><span class="fci">${icon}</span><span class="fct" style="color:${col}">${lab}</span><span class="fctime">${e.ts} · ${e.cid}</span></div><div class="fcb"><b>${e.rn}</b> · ${e.proc}<br><em>"${e.com}"</em></div>${extra}</div>`);
   });
 }
-
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
-buildFilters();
-initChart();
-prePopulate();
-applyFilters();
 </script>
 </body>
 </html>
